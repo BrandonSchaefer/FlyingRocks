@@ -79,7 +79,7 @@ VectorLines& VectorLines::add_point(Vector const& point)
             {point,
              vector_points[0].position - point});
 
-        // Update the last point to now point to our new point
+        // Update the last points direction to now point to our new point
         vector_points[vector_points.size() - 2].direction =
             point - vector_points[vector_points.size() - 2].position;
     }
