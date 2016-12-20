@@ -4,6 +4,7 @@ set (ASTEROIDS_REQUIRED
     sdl2
     SDL2_image
     SDL2_ttf
+    SDL2_mixer
 )
 
 pkg_check_modules(ASTEROIDS REQUIRED ${ASTEROIDS_REQUIRED})
@@ -12,12 +13,14 @@ set (ASTEROIDS_LOADER_SRC
     main.cpp
     sdl_backend.cpp
     sdl_error.cpp
+    sdl_renderer.cpp
     vector.cpp
 )
 
 set (ASTEROIDS_LOADER_HDR
     sdl_backend.h
     sdl_error.h
+    sdl_renderer.h
     vector.h
 )
 

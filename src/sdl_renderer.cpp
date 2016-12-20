@@ -23,76 +23,56 @@
  * SOFTWARE.
  */
 
-#include "sdl_backend.h"
 #include "sdl_error.h"
+#include "sdl_renderer.h"
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
 
 namespace
 {
-void init_sdl()
+void sdl_window_destroy(SDL_Window* window)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    SDL_DestroyWindow(window);
+}
+
+void sdl_renderer_destroy(SDL_Renderer* renderer)
+{
+    SDL_DestroyRenderer(renderer);
+}
+}
+
+SDLRenderer::SDLRenderer(std::string const& title, Size const& window_size) :
+    window_size(window_size),
+    window_(nullptr, sdl_window_destroy),
+    renderer_(nullptr, sdl_renderer_destroy)
+{
+    auto new_window = SDL_CreateWindow(title.c_str(),
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        window_size.width, window_size.height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+
+    if (new_window == nullptr)
     {
-        throw SDLError("Failed to init SDL");
+        throw SDLError("Failed to create SDL Widnow");
     }
-}
 
-void init_png_image()
-{
-    if (IMG_Init(IMG_INIT_PNG) < 0)
+    window_ = SDLWindowUPtr(new_window, sdl_window_destroy);
+
+    auto new_renderer = SDL_CreateRenderer(window_.get(), -1, SDL_RENDERER_ACCELERATED);
+
+    if (new_renderer == nullptr)
     {
-        SDL_Quit();
-        throw SDLError("Failed to init IMG png");
+        throw SDLError("Failed to create SDL Renderer");
     }
+
+    renderer_ = SDLRendererUPtr(new_renderer, sdl_renderer_destroy);
 }
 
-void init_ttf()
+SDL_Window* SDLRenderer::window() const
 {
-    if (TTF_Init() < 0)
-    {
-        IMG_Quit();
-        SDL_Quit();
-        throw SDLError("Failed to init TTF");
-    }
+    return window_.get();
 }
 
-void init_mixer()
+SDL_Renderer* SDLRenderer::renderer() const
 {
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
-
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-    {
-        TTF_Quit();
-        IMG_Quit();
-        SDL_Quit();
-        throw SDLError("Failed to init SDL mixer");
-    }
-}
-}
-
-// TODO Add overwritable default builders for img/ttf/mixer which will allow for custom
-// creation of those backends
-SDLBackend::SDLBackend()
-
-{
-    // Order matters when it comes to failing
-    init_sdl();
-    init_png_image();
-    init_ttf();
-    init_mixer();
-}
-
-SDLBackend::~SDLBackend()
-{
-    IMG_Quit();
-    TTF_Quit();
-    Mix_Quit();
-    SDL_Quit();
+    return renderer_.get();
 }

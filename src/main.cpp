@@ -24,8 +24,17 @@
  */
 
 #include "vector.h"
+#include "sdl_backend.h"
+#include "sdl_renderer.h"
 
 #include <iostream>
+#include <chrono>
+#include <thread>
+
+#include <SDL2/SDL.h>
+
+// TODO Reomve possibly
+using namespace std::chrono_literals;
 
 // for debuging
 std::ostream& operator<<(std::ostream& out, Vector const& v)
@@ -36,8 +45,35 @@ std::ostream& operator<<(std::ostream& out, Vector const& v)
 
 int main()
 {
-    Vector v{0,1,2};
-    v.rotate(90);
-    std::cout << v << std::endl;
+    SDLBackend backend;
+    SDLRenderer renderer("Asteroids", {800, 600});
+    /*
+    auto renderer = backend.renderer();
+
+    bool done = false;
+    while (!done)
+    {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+                case SDL_QUIT:
+                    done = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        SDL_RenderClear(renderer);
+        // Draw
+        SDL_RenderPresent(renderer);
+
+        // TODO cap FPS or something here
+        std::this_thread::sleep_for(50ms);
+    }
+    */
+
     return 0;
 }

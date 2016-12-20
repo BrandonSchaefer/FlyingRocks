@@ -23,12 +23,29 @@
  * SOFTWARE.
  */
 
-#include <memory>
 #include <string>
+#include <memory>
 
-class SDLBackend
+#include "geometry.h"
+
+class SDL_Window;
+class SDL_Renderer;
+
+typedef std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>     SDLWindowUPtr;
+typedef std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> SDLRendererUPtr;
+
+class SDLRenderer
 {
 public:
-    SDLBackend();
-    virtual ~SDLBackend();
+    SDLRenderer(std::string const& title, Size const& window_size);
+
+    // TODO Wrap these up in real classes/functions to avoid needing to expose SDL2
+    SDL_Window* window() const;
+    SDL_Renderer* renderer() const;
+
+private:
+    Size window_size;
+
+    SDLWindowUPtr window_;
+    SDLRendererUPtr renderer_;
 };
