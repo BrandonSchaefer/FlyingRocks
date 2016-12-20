@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-#include "vector_line_graphic.h"
+#include "vector_lines.h"
 
 #include <cstddef>
 

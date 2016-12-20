@@ -27,7 +27,7 @@
 #include "sdl_backend.h"
 #include "sdl_renderer.h"
 
-#include "vector_line_graphic.h"
+#include "vector_lines.h"
 
 #include <iostream>
 #include <chrono>
@@ -53,10 +53,10 @@ int main()
     SDLRenderer renderer("Asteroids", {(int)width, (int)height});
     auto sdl_renderer = renderer.renderer();
 
-    //VectorLineGraphic v({{width/2 + 10, height/2, 0}, {width/2 + 5, height/2 + 15, 0}, {width/2 + 15, height/2 + 15, 0}});
+    //VectorLines v({{width/2 + 10, height/2, 0}, {width/2 + 5, height/2 + 15, 0}, {width/2 + 15, height/2 + 15, 0}});
 
     /*
-    VectorLineGraphic v({
+    VectorLines v({
         {width/2 + 10, height/2 + 10},
         {width/2 + 11, height/2 + 13},
         {width/2 + 7,  height/2 + 18},
@@ -68,7 +68,7 @@ int main()
     v.scale(5.0f);
     */
 
-    VectorLineGraphic v;
+    VectorLines v;
 
     bool done = false;
     while (!done)
