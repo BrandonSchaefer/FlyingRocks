@@ -23,21 +23,16 @@
  * SOFTWARE.
  */
 
-#include "vector.h"
+#include "sdl_error.h"
 
-#include <iostream>
+#include <SDL2/SDL.h>
 
-// for debuging
-std::ostream& operator<<(std::ostream& out, Vector const& v)
+SDLError::SDLError() :
+    runtime_error(std::string(SDL_GetError()))
 {
-  out << "{" << std::fixed << v.x << ", " << v.y << ", " << v.z << "}";
-  return out;
 }
 
-int main()
+SDLError::SDLError(std::string const& what) :
+    runtime_error(what + "\n " + std::string(SDL_GetError()))
 {
-    Vector v{0,1,2};
-    v.rotate(90);
-    std::cout << v << std::endl;
-    return 0;
 }

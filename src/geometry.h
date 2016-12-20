@@ -23,21 +23,21 @@
  * SOFTWARE.
  */
 
-#include "vector.h"
-
-#include <iostream>
-
-// for debuging
-std::ostream& operator<<(std::ostream& out, Vector const& v)
+struct Size
 {
-  out << "{" << std::fixed << v.x << ", " << v.y << ", " << v.z << "}";
-  return out;
-}
+    int32_t width;
+    int32_t height;
+};
 
-int main()
+struct Point
 {
-    Vector v{0,1,2};
-    v.rotate(90);
-    std::cout << v << std::endl;
-    return 0;
-}
+    int32_t x;
+    int32_t y;
+};
+
+// TODO Maybe extend this to RenderableRectangle?
+struct Rectangle
+{
+    Point top_left;
+    Size size;
+};

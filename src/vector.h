@@ -23,21 +23,35 @@
  * SOFTWARE.
  */
 
-#include "vector.h"
+#ifndef VECTOR_H
+#define VECTOR_H
 
-#include <iostream>
-
-// for debuging
-std::ostream& operator<<(std::ostream& out, Vector const& v)
+class Vector
 {
-  out << "{" << std::fixed << v.x << ", " << v.y << ", " << v.z << "}";
-  return out;
-}
+public:
+    Vector(float x, float y, float z);
 
-int main()
-{
-    Vector v{0,1,2};
-    v.rotate(90);
-    std::cout << v << std::endl;
-    return 0;
-}
+    Vector operator+(Vector const& v) const;
+    Vector operator-(Vector const& v) const;
+    Vector operator*(float n) const;
+    Vector operator/(float n) const;
+
+    Vector& operator+=(Vector const& v);
+    Vector& operator-=(Vector const& v);
+    Vector& operator*=(float n);
+    Vector& operator/=(float n);
+
+    float magnitude() const;
+    void  normalize();
+
+    void set_magnitude(float mag);
+    void limit(float max);
+
+    void rotate(float degree);
+
+    float x;
+    float y;
+    float z;
+};
+
+#endif // VECTOR_H

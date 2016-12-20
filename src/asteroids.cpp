@@ -23,21 +23,4 @@
  * SOFTWARE.
  */
 
-#include "vector.h"
 
-#include <iostream>
-
-// for debuging
-std::ostream& operator<<(std::ostream& out, Vector const& v)
-{
-  out << "{" << std::fixed << v.x << ", " << v.y << ", " << v.z << "}";
-  return out;
-}
-
-int main()
-{
-    Vector v{0,1,2};
-    v.rotate(90);
-    std::cout << v << std::endl;
-    return 0;
-}

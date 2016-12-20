@@ -23,21 +23,11 @@
  * SOFTWARE.
  */
 
-#include "vector.h"
+#include <stdexcept>
+#include <string>
 
-#include <iostream>
-
-// for debuging
-std::ostream& operator<<(std::ostream& out, Vector const& v)
+struct SDLError : public std::runtime_error
 {
-  out << "{" << std::fixed << v.x << ", " << v.y << ", " << v.z << "}";
-  return out;
-}
-
-int main()
-{
-    Vector v{0,1,2};
-    v.rotate(90);
-    std::cout << v << std::endl;
-    return 0;
-}
+    SDLError();
+    explicit SDLError(std::string const& what);
+};

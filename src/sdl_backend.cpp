@@ -23,21 +23,18 @@
  * SOFTWARE.
  */
 
-#include "vector.h"
+#include "sdl_backend.h"
+#include "sdl_error.h"
 
-#include <iostream>
+#include <SDL2/SDL.h>
 
-// for debuging
-std::ostream& operator<<(std::ostream& out, Vector const& v)
+SDLBackend::SDLBackend(std::string const& title, Size const& window_size) :
+    window_size(window_size)
 {
-  out << "{" << std::fixed << v.x << ", " << v.y << ", " << v.z << "}";
-  return out;
-}
+    if (SDL_Init(SDL_INIT_EVERYTHING) > 0)
+    {
+        throw SDLError();
+    }
 
-int main()
-{
-    Vector v{0,1,2};
-    v.rotate(90);
-    std::cout << v << std::endl;
-    return 0;
+    //if (
 }
