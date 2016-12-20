@@ -23,6 +23,9 @@
  * SOFTWARE.
  */
 
+#ifndef ASTEROIDS_SDL_ERROR_H_
+#define ASTEROIDS_SDL_ERROR_H_
+
 #include <stdexcept>
 #include <string>
 
@@ -31,3 +34,5 @@ struct SDLError : public std::runtime_error
     SDLError();
     explicit SDLError(std::string const& what);
 };
+
+#endif /* ASTEROIDS_SDL_ERROR_H_ */

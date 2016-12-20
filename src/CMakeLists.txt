@@ -15,6 +15,7 @@ set (ASTEROIDS_LOADER_SRC
     sdl_error.cpp
     sdl_renderer.cpp
     vector.cpp
+    vector_line_graphic.cpp
 )
 
 set (ASTEROIDS_LOADER_HDR
@@ -22,6 +23,7 @@ set (ASTEROIDS_LOADER_HDR
     sdl_error.h
     sdl_renderer.h
     vector.h
+    vector_line_graphic.h
 )
 
 include_directories (${ASTEROIDS_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})

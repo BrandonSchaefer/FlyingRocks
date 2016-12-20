@@ -23,13 +23,13 @@
  * SOFTWARE.
  */
 
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef ASTEROIDS_VECTOR_H_
+#define ASTEROIDS_VECTOR_H_
 
 class Vector
 {
 public:
-    Vector(float x, float y, float z);
+    Vector(float x, float y);
 
     Vector operator+(Vector const& v) const;
     Vector operator-(Vector const& v) const;
@@ -51,7 +51,6 @@ public:
 
     float x;
     float y;
-    float z;
 };
 
-#endif // VECTOR_H
+#endif // ASTEROIDS_VECTOR_H_

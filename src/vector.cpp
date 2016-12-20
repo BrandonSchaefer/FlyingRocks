@@ -28,33 +28,30 @@
 
 #include <cmath>
 
-#include <iostream>
-
-Vector::Vector(float x, float y, float z)
+Vector::Vector(float x, float y)
   : x(x)
   , y(y)
-  , z(z)
 {
 }
 
 Vector Vector::operator+(Vector const& v) const
 {
-    return {x + v.x, y + v.y, z + v.z};
+    return {x + v.x, y + v.y};
 }
 
 Vector Vector::operator-(Vector const& v) const
 {
-    return {x - v.x, y - v.y, z - v.z};
+    return {x - v.x, y - v.y};
 }
 
 Vector Vector::operator*(float n) const
 {
-    return {x * n, y * n, z * n};
+    return {x * n, y * n};
 }
 
 Vector Vector::operator/(float n) const
 {
-    return {x / n, y / n, z / n};
+    return {x / n, y / n};
 }
 
 Vector& Vector::operator+=(Vector const& v)
@@ -83,7 +80,7 @@ Vector& Vector::operator/=(float n)
 
 float Vector::magnitude() const
 {
-    return sqrtf(x * x + y * y + z * z);
+    return sqrtf(x * x + y * y);
 }
 
 void Vector::normalize()
@@ -105,7 +102,6 @@ void Vector::limit(float max)
         set_magnitude(max);
 }
 
-// FIXME just rotating on x/y
 void Vector::rotate(float angle)
 {
     float rad = angle * M_PI / 180;

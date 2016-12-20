@@ -23,17 +23,31 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_SDL_BACKEND_H_
-#define ASTEROIDS_SDL_BACKEND_H_
+#ifndef ASTEROIDS_VECTOR_LINES_H_
+#define ASTEROIDS_VECTOR_LINES_H_
 
-#include <memory>
-#include <string>
+#include <vector>
+#include "vector.h"
 
-class SDLBackend
+struct VectorPoint
 {
-public:
-    SDLBackend();
-    virtual ~SDLBackend();
+    Vector position;
+    Vector direction;
 };
 
-#endif /* ASTEROIDS_SDL_BACKEND_H_ */
+class VectorLines
+{
+public:
+    VectorLines() = default;
+    explicit VectorLines(std::vector<Vector> const& points);
+
+    void scale(float scalar);
+    void move(Vector const& direction);
+
+    VectorLines& add_point(Vector const& point);
+
+private:
+    std::vector<VectorPoint> vector_points;
+};
+
+#endif /* ASTEROIDS_VECTOR_LINES_H_ */

@@ -23,6 +23,9 @@
  * SOFTWARE.
  */
 
+#ifndef ASTEROIDS_GEOMETRY_H_
+#define ASTEROIDS_GEOMETRY_H_
+
 struct Size
 {
     int32_t width;
@@ -41,3 +44,5 @@ struct Rectangle
     Point top_left;
     Size size;
 };
+
+#endif /* ASTEROIDS_GEOMETRY_H_ */

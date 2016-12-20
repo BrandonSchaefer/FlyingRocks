@@ -23,6 +23,9 @@
  * SOFTWARE.
  */
 
+#ifndef ASTEROIDS_SDL_RENDERER_H_
+#define ASTEROIDS_SDL_RENDERER_H_
+
 #include <string>
 #include <memory>
 
@@ -49,3 +52,5 @@ private:
     SDLWindowUPtr window_;
     SDLRendererUPtr renderer_;
 };
+
+#endif /* ASTEROIDS_SDL_RENDERER_H_ */
