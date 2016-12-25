@@ -67,6 +67,39 @@ SDLRenderer::SDLRenderer(std::string const& title, Size const& window_size) :
     renderer_ = SDLRendererUPtr(new_renderer, sdl_renderer_destroy);
 }
 
+void SDLRenderer::set_color(Color const& color) const
+{
+    SDL_SetRenderDrawColor(renderer_.get(), color.red, color.green, color.blue, color.alpha);
+}
+
+void SDLRenderer::draw(Point const& p1, Point const& p2) const
+{
+    SDL_RenderDrawLine(renderer_.get(), p1.x, p1.y, p2.x, p2.y);
+}
+
+void SDLRenderer::draw(std::vector<Point> const& points) const
+{
+    std::vector<SDL_Point> sdl_points;
+    for (auto const& p : points)
+    {
+        sdl_points.push_back({p.x, p.y});
+    }
+
+    SDL_RenderDrawLines(renderer_.get(), sdl_points.data(), sdl_points.size());
+}
+
+void SDLRenderer::draw(Rectangle const& rect) const
+{
+    SDL_Rect sdl_rect{rect.top_left.x, rect.top_left.y, rect.size.width, rect.size.height};
+    SDL_RenderDrawRect(renderer_.get(), &sdl_rect);
+}
+
+void SDLRenderer::draw_solid(Rectangle const& rect) const
+{
+    SDL_Rect sdl_rect{rect.top_left.x, rect.top_left.y, rect.size.width, rect.size.height};
+    SDL_RenderFillRect(renderer_.get(), &sdl_rect);
+}
+
 SDL_Window* SDLRenderer::window() const
 {
     return window_.get();

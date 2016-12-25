@@ -78,6 +78,11 @@ Vector& Vector::operator/=(float n)
     return *this;
 }
 
+Vector Vector::operator-()
+{
+    return {-x, -y};
+}
+
 float Vector::magnitude() const
 {
     return sqrtf(x * x + y * y);

@@ -23,62 +23,46 @@
  * SOFTWARE.
  */
 
-#include "sdl_backend.h"
-#include "sdl_error.h"
+#ifndef ASTEROIDS_SHIP_H_
+#define ASTEROIDS_SHIP_H_
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#include "position_updater.h"
+#include "vector.h"
+#include "vector_lines.h"
 
-namespace
+enum TurnDirection
 {
-void init_sdl()
+    none,
+    right,
+    left
+};
+
+class Ship
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-    {
-        throw SDLError("Failed to init SDL");
-    }
-}
+public:
+    Ship(Vector const& position, Vector const& acceleration);
 
-void init_ttf()
-{
-    if (TTF_Init() < 0)
-    {
-        SDL_Quit();
-        throw SDLError("Failed to init TTF");
-    }
-}
+    void update(float delta);
+    void update_position(PositionUpdater const& position_updater);
 
-void init_mixer()
-{
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
+    void start_thruster();
+    void stop_thruster();
+    
+    void start_turning(TurnDirection dir);
+    void stop_turning();
 
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-    {
-        TTF_Quit();
-        SDL_Quit();
-        throw SDLError("Failed to init SDL mixer");
-    }
-}
-}
+    Vector pos() const;
+    Vector accel() const;
 
-// TODO Add overwritable default builders for img/ttf/mixer which will allow for custom
-// creation of those backends
-SDLBackend::SDLBackend()
+    VectorLines ship;
 
-{
-    // Order matters when it comes to failing
-    init_sdl();
-    init_ttf();
-    init_mixer();
-}
+private:
+    Vector acceleration;
+    Vector velocity;
+    Vector position;
 
-SDLBackend::~SDLBackend()
-{
-    TTF_Quit();
-    Mix_Quit();
-    SDL_Quit();
-}
+    bool thruster_on{false};
+    TurnDirection turn_direction{TurnDirection::none};
+};
+
+#endif /* ASTEROIDS_SHIP_H_ */

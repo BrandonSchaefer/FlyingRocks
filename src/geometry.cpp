@@ -22,3 +22,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+#include "geometry.h"
+
+void Rectangle::expand(int32_t amount)
+{
+    top_left.x -= amount;
+    top_left.y -= amount;
+
+    size.width  += amount * 2;
+    size.height += amount * 2;
+}
+
+void Rectangle::shrink(int32_t amount)
+{
+    top_left.x += amount;
+    top_left.y += amount;
+
+    size.width  -= amount * 2;
+    size.height -= amount * 2;
+}

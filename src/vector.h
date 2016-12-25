@@ -29,7 +29,7 @@
 class Vector
 {
 public:
-    Vector(float x, float y);
+    Vector(float x = 0.0f, float y = 0.0f);
 
     Vector operator+(Vector const& v) const;
     Vector operator-(Vector const& v) const;
@@ -40,6 +40,8 @@ public:
     Vector& operator-=(Vector const& v);
     Vector& operator*=(float n);
     Vector& operator/=(float n);
+
+    Vector operator-();
 
     float magnitude() const;
     void  normalize();

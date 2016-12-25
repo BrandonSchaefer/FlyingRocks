@@ -23,62 +23,38 @@
  * SOFTWARE.
  */
 
-#include "sdl_backend.h"
-#include "sdl_error.h"
+#include "bullet_manager.h"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#include <algorithm>
 
 namespace
 {
-void init_sdl()
+Size const size{3, 3};
+float const lifetime{1.0f};
+float const speed_mag{15.0f};
+}
+
+void BulletManager::create_bullet(Vector const& position, Vector const& direction)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    auto speed = direction;
+    speed.set_magnitude(speed_mag);
+
+    bullets_.push_back({position, speed, size, lifetime});
+}
+
+void BulletManager::update(float delta)
+{
+    for (auto& b : bullets_)
     {
-        throw SDLError("Failed to init SDL");
+        b.lifetime -= delta;
+        b.position += b.speed;
     }
+
+    bullets_.erase(std::remove_if(bullets_.begin(), bullets_.end(),
+        [](Bullet const& b) { return b.lifetime <= 0.0f; }), bullets_.end());
 }
 
-void init_ttf()
+std::vector<Bullet> BulletManager::bullets() const
 {
-    if (TTF_Init() < 0)
-    {
-        SDL_Quit();
-        throw SDLError("Failed to init TTF");
-    }
-}
-
-void init_mixer()
-{
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
-
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-    {
-        TTF_Quit();
-        SDL_Quit();
-        throw SDLError("Failed to init SDL mixer");
-    }
-}
-}
-
-// TODO Add overwritable default builders for img/ttf/mixer which will allow for custom
-// creation of those backends
-SDLBackend::SDLBackend()
-
-{
-    // Order matters when it comes to failing
-    init_sdl();
-    init_ttf();
-    init_mixer();
-}
-
-SDLBackend::~SDLBackend()
-{
-    TTF_Quit();
-    Mix_Quit();
-    SDL_Quit();
+    return bullets_;
 }

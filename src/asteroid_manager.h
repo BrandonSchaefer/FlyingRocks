@@ -23,62 +23,25 @@
  * SOFTWARE.
  */
 
-#include "sdl_backend.h"
-#include "sdl_error.h"
+#ifndef ASTEROIDS_ASTEROID_MANAGER_H_
+#define ASTEROIDS_ASTEROID_MANAGER_H_
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#include "asteroid.h"
+#include "sdl_renderer.h"
 
-namespace
+class AsteroidMananger
 {
-void init_sdl()
-{
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-    {
-        throw SDLError("Failed to init SDL");
-    }
-}
+public:
+    explicit AsteroidMananger(Rectangle const& screen_size, int32_t starting_number = 5);
 
-void init_ttf()
-{
-    if (TTF_Init() < 0)
-    {
-        SDL_Quit();
-        throw SDLError("Failed to init TTF");
-    }
-}
+    std::vector<Asteroid> asteroids() const;
 
-void init_mixer()
-{
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
+    void draw(SDLRenderer const& renderer) const;
 
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-    {
-        TTF_Quit();
-        SDL_Quit();
-        throw SDLError("Failed to init SDL mixer");
-    }
-}
-}
+private:
+    Rectangle screen_size;
+    int32_t starting_number;
+    std::vector<Asteroid> asteroids_;
+};
 
-// TODO Add overwritable default builders for img/ttf/mixer which will allow for custom
-// creation of those backends
-SDLBackend::SDLBackend()
-
-{
-    // Order matters when it comes to failing
-    init_sdl();
-    init_ttf();
-    init_mixer();
-}
-
-SDLBackend::~SDLBackend()
-{
-    TTF_Quit();
-    Mix_Quit();
-    SDL_Quit();
-}
+#endif /* ASTEROIDS_ASTEROID_MANAGER_H_ */

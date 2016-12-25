@@ -27,11 +27,16 @@
 #include "sdl_backend.h"
 #include "sdl_renderer.h"
 
+#include "bullet_manager.h"
+#include "position_updater.h"
 #include "vector_lines.h"
+#include "timer.h"
+#include "ship.h"
 
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <stdlib.h>
 
 #include <SDL2/SDL.h>
 
@@ -45,34 +50,68 @@ std::ostream& operator<<(std::ostream& out, Vector const& v)
   return out;
 }
 
+namespace
+{
+// FIXME Should depend on the display but 59.5 is fine for now
+float const frames_per_second = 59.5f;
+float const one_second = 1000.0f;
+
+int mod(int x, int y)
+{
+    int m = x % y;
+    if (m < 0.0f)
+    {
+        m += y;
+    }
+
+    return m;
+}
+
+// Set viewport to smaller then this to get an unrendered section
+Rectangle const default_size{{0, 0}, {800, 600}};
+
+}
+
 int main()
 {
-    float width = 800;
-    float height = 600;
+    // FIXME move to a real random generator
+    srand(time(nullptr));
+
+    //float width = 800;
+    //float height = 600;
+
+    // expand size so we can cheap warp
+    auto expanded = default_size;
+    // Use ship size? Or largest object size
+    expanded.expand(50);
+
     SDLBackend backend;
-    SDLRenderer renderer("Asteroids", {(int)width, (int)height});
+    SDLRenderer renderer("Asteroids", default_size.size);
     auto sdl_renderer = renderer.renderer();
+    SDL_Rect viewport{expanded.top_left.x, expanded.top_left.y, expanded.size.width, expanded.size.height};
+    SDL_RenderSetViewport(sdl_renderer, &viewport);
 
-    //VectorLines v({{width/2 + 10, height/2, 0}, {width/2 + 5, height/2 + 15, 0}, {width/2 + 15, height/2 + 15, 0}});
+    float width  = expanded.size.width;
+    float height = expanded.size.height;
 
-    /*
-    VectorLines v({
-        {width/2 + 10, height/2 + 10},
-        {width/2 + 11, height/2 + 13},
-        {width/2 + 7,  height/2 + 18},
-        {width/2 + 9,  height/2 + 20},
-        {width/2 + 13, height/2 + 19},
-        {width/2 + 16, height/2 + 13},
-        {width/2 + 13, height/2 + 11},
-    });
-    v.scale(5.0f);
-    */
+    BulletManager bullet_manager;
+    PositionUpdater position_updater(expanded);
 
     VectorLines v;
+
+    Ship s({width/2, height/2}, {0.0, -7.5});
+
+    float delta_time = 0.0f;
+    Timer t;
+
+    float current_second = 0.0f;
+    uint32_t frames = 0;
 
     bool done = false;
     while (!done)
     {
+        t.start();
+
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -82,19 +121,43 @@ int main()
                 {
                     float x = event.button.x;
                     float y = event.button.y;
-                    v.add_point({x, y});
+                    s.ship.set_position({x, y});
+                    //v.add_point({x, y});
                 }
                     break;
+                case SDL_KEYDOWN:
+                {
+                    if (event.key.keysym.sym == SDLK_UP)
+                    {
+                        s.start_thruster();
+                    }
+                    else if (event.key.keysym.sym == SDLK_RIGHT && event.key.repeat == 0)
+                    {
+                        s.start_turning(TurnDirection::right);
+                    }
+                    else if (event.key.keysym.sym == SDLK_LEFT && event.key.repeat == 0)
+                    {
+                        s.start_turning(TurnDirection::left);
+                    }
+                    else if (event.key.keysym.sym == SDLK_SPACE)
+                    {
+                        bullet_manager.create_bullet(s.pos(), s.accel());
+                    }
+                    break;
+                }
                 case SDL_KEYUP:
                 {
                     if (event.key.keysym.sym == SDLK_RIGHT)
-                        v.scale(1.1f);
+                        s.stop_turning();
+                        //v.scale(1.1f);
                     else if (event.key.keysym.sym == SDLK_LEFT)
-                        v.scale(0.9f);
+                        s.stop_turning();
+                        //v.scale(0.9f);
                     else if (event.key.keysym.sym == SDLK_UP)
-                        v.move({0.0f, -10.0f});
-                    else if (event.key.keysym.sym == SDLK_DOWN)
-                        v.move({0.0f, 10.0f});
+                        s.stop_thruster();
+                        //v.move({0.0f, -10.0f});
+                    //else if (event.key.keysym.sym == SDLK_DOWN)
+                        //v.move({0.0f, 10.0f});
                 }
                     break;
                 case SDL_QUIT:
@@ -108,36 +171,49 @@ int main()
         SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x0, 0x0, 0xFF);
 
         SDL_RenderClear(sdl_renderer);
-        /*
-        std::vector<SDL_Point> points;
-        for (auto const& p : v.vector_points)
-        {
-            points.push_back({(int)p.position.x, (int)p.position.y});
-        }
-        if (v.vector_points.size() > 2)
-            points.push_back({(int)v.vector_points[0].position.x, (int)v.vector_points[0].position.y});
+
+        // Update
+        s.update(delta_time);
+        bullet_manager.update(delta_time);
+
+        // Update Position based on locations
+        s.update_position(position_updater);
 
         SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        SDL_RenderDrawLines(sdl_renderer, points.data(), points.size());
-        */
 
-/*
-        SDL_Point points[8] = {
-            {(int)v.vector_points[0].position.x, (int)v.vector_points[0].position.y},
-            {(int)v.vector_points[1].position.x, (int)v.vector_points[1].position.y},
-            {(int)v.vector_points[2].position.x, (int)v.vector_points[2].position.y},
-            {(int)v.vector_points[3].position.x, (int)v.vector_points[3].position.y},
-            {(int)v.vector_points[4].position.x, (int)v.vector_points[4].position.y},
-            {(int)v.vector_points[5].position.x, (int)v.vector_points[5].position.y},
-            {(int)v.vector_points[6].position.x, (int)v.vector_points[6].position.y},
-            {(int)v.vector_points[0].position.x, (int)v.vector_points[0].position.y}};
+        // Draw
+        s.ship.draw(renderer);
 
-        */
+        for (auto const& b : bullet_manager.bullets())
+        {
+            SDL_Rect r{mod(b.position.x, width), mod(b.position.y, height), b.size.width, b.size.height};
+            SDL_RenderFillRect(sdl_renderer, &r);
+        }
+
+        SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xFF, 0x00, 0xFF);
+        auto r = s.ship.surrounding_rect();
+        SDL_Rect ship_rect{r.top_left.x, r.top_left.y, r.size.width, r.size.height};
+
+        SDL_RenderDrawRect(sdl_renderer, &ship_rect);
 
         SDL_RenderPresent(sdl_renderer);
 
-        // TODO cap FPS or something here
-        std::this_thread::sleep_for(50ms);
+        // TODO Clean this FPS into a class or something
+        if (t.elapsed().count() < one_second / frames_per_second)
+        {
+            std::this_thread::sleep_for(1000ms / frames_per_second - t.elapsed());
+        }
+
+        delta_time = t.elapsed().count() / one_second;
+        current_second += delta_time;
+        frames++;
+
+        if (current_second >= 1.0f)
+        {
+            std::cout << frames << " frames per second " << std::endl;
+            frames = 0;
+            current_second = 0.0f;
+        }
     }
 
     return 0;

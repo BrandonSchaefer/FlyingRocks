@@ -26,8 +26,11 @@
 #ifndef ASTEROIDS_VECTOR_LINES_H_
 #define ASTEROIDS_VECTOR_LINES_H_
 
-#include <vector>
+#include "geometry.h"
+#include "sdl_renderer.h"
 #include "vector.h"
+
+#include <vector>
 
 struct VectorPoint
 {
@@ -39,15 +42,27 @@ class VectorLines
 {
 public:
     VectorLines() = default;
-    explicit VectorLines(std::vector<Vector> const& points);
+    VectorLines(std::vector<Vector> const& points);
 
     void scale(float scalar);
     void move(Vector const& direction);
+    void rotate(float degrees);
+    void set_position(Vector const& position);
 
-    VectorLines& add_point(Vector const& point);
+    void add_point(Vector const& point);
+    Rectangle surrounding_rect();
 
-private:
+    Vector first_position() const;
+
+    // TODO This should be part of a different class maybe?
+    void draw(SDLRenderer const& renderer) const;
+
+    // TODO Return a list of points, and make a View class possibly
     std::vector<VectorPoint> vector_points;
+private:
+    void update_positions_from_direction();
+
+
 };
 
 #endif /* ASTEROIDS_VECTOR_LINES_H_ */

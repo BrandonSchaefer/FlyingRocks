@@ -25,7 +25,10 @@
 
 #include "vector_lines.h"
 
+#include <cmath>
 #include <cstddef>
+#include <limits>
+#include <iostream>
 
 /* Set the position for each point
  * Each vector direction = next_point.position % points - current_point.position
@@ -48,28 +51,40 @@ VectorLines::VectorLines(std::vector<Vector> const& points)
  */
 void VectorLines::scale(float scalar)
 {
-    for (auto& p : vector_points)
+    for (auto& vector_point : vector_points)
     {
-        p.direction *= scalar;
+        vector_point.direction *= scalar;
     }
 
-    for (size_t i = 1; i < vector_points.size(); i++)
-    {
-        vector_points[i].position =
-            vector_points[i - 1].position +
-            vector_points[i - 1].direction;
-    }
+    update_positions_from_direction();
 }
 
 void VectorLines::move(Vector const& direction)
 {
-    for (auto& p : vector_points)
+    for (auto& vector_point : vector_points)
     {
-        p.position += direction;
+        vector_point.position += direction;
     }
 }
 
-VectorLines& VectorLines::add_point(Vector const& point)
+void VectorLines::rotate(float angle)
+{
+    for (auto& vector_point : vector_points)
+    {
+        vector_point.direction.rotate(angle);
+    }
+
+    update_positions_from_direction();
+}
+
+void VectorLines::set_position(Vector const& position)
+{
+    vector_points[0].position = position;
+
+    update_positions_from_direction();
+}
+
+void VectorLines::add_point(Vector const& point)
 {
     // TODO Clean this up a bit
     if (vector_points.size() >= 1)
@@ -87,6 +102,76 @@ VectorLines& VectorLines::add_point(Vector const& point)
     {
         vector_points.push_back({point, {0.0f, 0.0f}});
     }
+}
 
-    return *this;
+Rectangle VectorLines::surrounding_rect()
+{
+    int32_t lowest_x  = std::numeric_limits<int32_t>::max();
+    int32_t highest_x = 0;
+    int32_t lowest_y  = std::numeric_limits<int32_t>::max();
+    int32_t highest_y = 0;
+
+    for (auto const& p : vector_points)
+    {
+        if (p.position.x < lowest_x)
+        {
+            lowest_x = p.position.x;
+        }
+        if (p.position.x > highest_x)
+        {
+            highest_x = p.position.x;
+        }
+        if (p.position.y < lowest_y)
+        {
+            lowest_y = p.position.y;
+        }
+        if (p.position.y > highest_y)
+        {
+            highest_y = p.position.y;
+        }
+    }
+
+    return {{lowest_x, lowest_y},
+            {highest_x - lowest_x, highest_y - lowest_y}};
+}
+
+void VectorLines::update_positions_from_direction()
+{
+    for (size_t i = 1; i < vector_points.size(); i++)
+    {
+        vector_points[i].position =
+            vector_points[i - 1].position +
+            vector_points[i - 1].direction;
+    }
+
+}
+
+Vector VectorLines::first_position() const
+{
+    if (vector_points.empty())
+    {
+        throw std::runtime_error("Empty VectorLines");
+    }
+
+    return vector_points[0].position;
+}
+
+void VectorLines::draw(SDLRenderer const& renderer) const
+{
+    std::vector<Point> points;
+    for (auto const& p : vector_points)
+    {
+        auto x = static_cast<int32_t>(std::round(p.position.x));
+        auto y = static_cast<int32_t>(std::round(p.position.y));
+        points.push_back({x, y});
+    }
+
+    if (!vector_points.empty())
+    {
+        auto x = static_cast<int32_t>(std::round(vector_points[0].position.x));
+        auto y = static_cast<int32_t>(std::round(vector_points[0].position.y));
+        points.push_back({x, y});
+    }
+
+    renderer.draw(points);
 }

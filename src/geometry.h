@@ -26,11 +26,7 @@
 #ifndef ASTEROIDS_GEOMETRY_H_
 #define ASTEROIDS_GEOMETRY_H_
 
-struct Size
-{
-    int32_t width;
-    int32_t height;
-};
+#include <cstdint>
 
 struct Point
 {
@@ -38,9 +34,18 @@ struct Point
     int32_t y;
 };
 
+struct Size
+{
+    int32_t width;
+    int32_t height;
+};
+
 // TODO Maybe extend this to RenderableRectangle?
 struct Rectangle
 {
+    void expand(int32_t amount);
+    void shrink(int32_t amount);
+
     Point top_left;
     Size size;
 };

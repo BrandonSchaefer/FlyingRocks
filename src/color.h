@@ -23,62 +23,10 @@
  * SOFTWARE.
  */
 
-#include "sdl_backend.h"
-#include "sdl_error.h"
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
-
-namespace
+struct Color
 {
-void init_sdl()
-{
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-    {
-        throw SDLError("Failed to init SDL");
-    }
-}
-
-void init_ttf()
-{
-    if (TTF_Init() < 0)
-    {
-        SDL_Quit();
-        throw SDLError("Failed to init TTF");
-    }
-}
-
-void init_mixer()
-{
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
-
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-    {
-        TTF_Quit();
-        SDL_Quit();
-        throw SDLError("Failed to init SDL mixer");
-    }
-}
-}
-
-// TODO Add overwritable default builders for img/ttf/mixer which will allow for custom
-// creation of those backends
-SDLBackend::SDLBackend()
-
-{
-    // Order matters when it comes to failing
-    init_sdl();
-    init_ttf();
-    init_mixer();
-}
-
-SDLBackend::~SDLBackend()
-{
-    TTF_Quit();
-    Mix_Quit();
-    SDL_Quit();
-}
+    int16_t red;
+    int16_t green;
+    int16_t blue;
+    int16_t alpha;
+};

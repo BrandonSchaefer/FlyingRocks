@@ -28,7 +28,9 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
+#include "color.h"
 #include "geometry.h"
 
 class SDL_Window;
@@ -41,6 +43,14 @@ class SDLRenderer
 {
 public:
     SDLRenderer(std::string const& title, Size const& window_size);
+
+    void set_color(Color const& color) const;
+
+    void draw(Point const& p1, Point const& p2) const;
+    void draw(std::vector<Point> const& points) const;
+
+    void draw(Rectangle const& rect) const;
+    void draw_solid(Rectangle const& rect) const;
 
     // TODO Wrap these up in real classes/functions to avoid needing to expose SDL2
     SDL_Window* window() const;

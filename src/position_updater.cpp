@@ -23,62 +23,38 @@
  * SOFTWARE.
  */
 
-#include "sdl_backend.h"
-#include "sdl_error.h"
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#include "position_updater.h"
 
 namespace
 {
-void init_sdl()
+int32_t mod(int32_t x, int32_t y)
 {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    int m = x % y;
+    if (m < 0.0f)
     {
-        throw SDLError("Failed to init SDL");
+        m += y;
     }
+
+    return m;
+}
 }
 
-void init_ttf()
+PositionUpdater::PositionUpdater(Rectangle const& world_size) :
+    world(world_size)
 {
-    if (TTF_Init() < 0)
+}
+
+void PositionUpdater::update_vector_lines(VectorLines& lines) const
+{
+     auto main_point = lines.first_position();
+     auto width  = world.size.width;
+     auto height = world.size.height;
+
+    if (main_point.x < 0 || main_point.x >= width ||
+        main_point.y < 0 || main_point.y >= height)
     {
-        SDL_Quit();
-        throw SDLError("Failed to init TTF");
+        auto new_x = static_cast<float>(mod(main_point.x, width));
+        auto new_y = static_cast<float>(mod(main_point.y, height));
+        lines.set_position({new_x, new_y});
     }
-}
-
-void init_mixer()
-{
-    int audio_rate = 22050;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
-
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
-    {
-        TTF_Quit();
-        SDL_Quit();
-        throw SDLError("Failed to init SDL mixer");
-    }
-}
-}
-
-// TODO Add overwritable default builders for img/ttf/mixer which will allow for custom
-// creation of those backends
-SDLBackend::SDLBackend()
-
-{
-    // Order matters when it comes to failing
-    init_sdl();
-    init_ttf();
-    init_mixer();
-}
-
-SDLBackend::~SDLBackend()
-{
-    TTF_Quit();
-    Mix_Quit();
-    SDL_Quit();
 }
