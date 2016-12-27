@@ -1,0 +1,19 @@
+Animation:
+    - Need to setup animations for destroyed ship and asteroids
+    - Need a second VectorLine of the ship with flame out of the back with thruster on
+
+Rotation of VectorLines:
+    - Need to rotate around the middle of the VectorLine (such as ship/asteroid).
+        Currently it looks bad
+
+Score:
+    - Need to draw the score and keep track of it
+
+Lifes:
+    - Need to add lifes, keep track of it and handle the logic
+
+
+BUGS:
+    - Currently when close to wrapping the asteroid will get stuck on the edge of the window
+      and not warp to the other side (even with vel that *should* get there). I assume some
+      rounding issue somewhere.
