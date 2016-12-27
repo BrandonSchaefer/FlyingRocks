@@ -23,6 +23,9 @@
  * SOFTWARE.
  */
 
+#ifndef FLYING_ROCK_COLOR_H_
+#define FLYING_ROCK_COLOR_H_
+
 struct Color
 {
     int16_t red;
@@ -30,3 +33,5 @@ struct Color
     int16_t blue;
     int16_t alpha;
 };
+
+#endif /* FLYING_ROCK_COLOR_H_ */

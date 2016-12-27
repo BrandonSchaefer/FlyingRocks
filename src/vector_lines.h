@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_VECTOR_LINES_H_
-#define ASTEROIDS_VECTOR_LINES_H_
+#ifndef FLYING_ROCK_VECTOR_LINES_H_
+#define FLYING_ROCK_VECTOR_LINES_H_
 
 #include "geometry.h"
 #include "sdl_renderer.h"
@@ -63,4 +63,4 @@ private:
     std::vector<VectorPoint> vector_points;
 };
 
-#endif /* ASTEROIDS_VECTOR_LINES_H_ */
+#endif /* FLYING_ROCK_VECTOR_LINES_H_ */

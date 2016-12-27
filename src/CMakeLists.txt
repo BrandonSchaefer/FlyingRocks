@@ -1,14 +1,14 @@
 find_package (PkgConfig)
 
-set (ASTEROIDS_REQUIRED
+set (FLYING_ROCK_REQUIRED
     sdl2
     SDL2_ttf
     SDL2_mixer
 )
 
-pkg_check_modules(ASTEROIDS REQUIRED ${ASTEROIDS_REQUIRED})
+pkg_check_modules(FLYING_ROCK REQUIRED ${FLYING_ROCK_REQUIRED})
 
-set (ASTEROIDS_LOADER_SRC
+set (FLYING_ROCK_LOADER_SRC
     main.cpp
     asteroid_manager.cpp
     bullet_manager.cpp
@@ -24,7 +24,7 @@ set (ASTEROIDS_LOADER_SRC
     vector_lines.cpp
 )
 
-set (ASTEROIDS_LOADER_HDR
+set (FLYING_ROCK_LOADER_HDR
     asteroid.h
     asteroid_manager.h
     bullet.h
@@ -41,8 +41,8 @@ set (ASTEROIDS_LOADER_HDR
     vector_lines.h
 )
 
-include_directories (${ASTEROIDS_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
+include_directories (${FLYING_ROCK_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
 
-add_executable (asteroids ${ASTEROIDS_LOADER_SRC} ${ASTEROIDS_LOADER_HDR})
+add_executable (flying_rocks ${FLYING_ROCK_LOADER_SRC} ${FLYING_ROCK_LOADER_HDR})
 
-target_link_libraries (asteroids ${ASTEROIDS_LIBRARIES} ${ASTEROIDS_LDFLAGS})
+target_link_libraries (flying_rocks ${FLYING_ROCK_LIBRARIES} ${FLYING_ROCK_LDFLAGS})

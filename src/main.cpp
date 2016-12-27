@@ -76,7 +76,7 @@ int main()
     //expanded.expand(50);
 
     SDLBackend backend;
-    SDLRenderer renderer("Asteroids", default_size.size);
+    SDLRenderer renderer("Flying Rocks", default_size.size);
     auto sdl_renderer = renderer.renderer();
     SDL_Rect viewport{expanded.top_left.x, expanded.top_left.y, expanded.size.width, expanded.size.height};
     SDL_RenderSetViewport(sdl_renderer, &viewport);

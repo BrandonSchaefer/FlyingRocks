@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_BULLET_H_
-#define ASTEROIDS_BULLET_H_
+#ifndef FLYING_ROCK_BULLET_H_
+#define FLYING_ROCK_BULLET_H_
 
 #include "geometry.h"
 #include "vector.h"
@@ -38,4 +38,4 @@ struct Bullet
     float lifetime;
 };
 
-#endif /* ASTEROIDS_BULLET_H_ */
+#endif /* FLYING_ROCK_BULLET_H_ */

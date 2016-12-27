@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_GEOMETRY_H_
-#define ASTEROIDS_GEOMETRY_H_
+#ifndef FLYING_ROCK_GEOMETRY_H_
+#define FLYING_ROCK_GEOMETRY_H_
 
 #include <cstdint>
 
@@ -40,7 +40,6 @@ struct Size
     int32_t height;
 };
 
-// TODO Maybe extend this to RenderableRectangle?
 struct Rectangle
 {
     void expand(int32_t amount);
@@ -52,4 +51,4 @@ struct Rectangle
     Size size;
 };
 
-#endif /* ASTEROIDS_GEOMETRY_H_ */
+#endif /* FLYING_ROCK_GEOMETRY_H_ */

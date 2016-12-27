@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_TIMER_H_
-#define ASTEROIDS_TIMER_H_
+#ifndef FLYING_ROCK_TIMER_H_
+#define FLYING_ROCK_TIMER_H_
 
 #include <chrono>
 
@@ -39,4 +39,4 @@ private:
     std::chrono::milliseconds start_{0};
 };
 
-#endif /* ASTEROIDS_TIMER_H_ */
+#endif /* FLYING_ROCK_TIMER_H_ */

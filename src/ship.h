@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_SHIP_H_
-#define ASTEROIDS_SHIP_H_
+#ifndef FLYING_ROCK_SHIP_H_
+#define FLYING_ROCK_SHIP_H_
 
 #include "position_updater.h"
 #include "vector.h"
@@ -47,7 +47,7 @@ public:
 
     void start_thruster();
     void stop_thruster();
-    
+
     void start_turning(TurnDirection dir);
     void stop_turning();
 
@@ -65,4 +65,4 @@ private:
     TurnDirection turn_direction{TurnDirection::none};
 };
 
-#endif /* ASTEROIDS_SHIP_H_ */
+#endif /* FLYING_ROCK_SHIP_H_ */

@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_VECTOR_H_
-#define ASTEROIDS_VECTOR_H_
+#ifndef FLYING_ROCK_VECTOR_H_
+#define FLYING_ROCK_VECTOR_H_
 
 class Vector
 {
@@ -56,4 +56,4 @@ public:
     float y;
 };
 
-#endif // ASTEROIDS_VECTOR_H_
+#endif // FLYING_ROCK_VECTOR_H_

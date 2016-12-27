@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_BASIC_ASTEROID_SHAPE_H_
-#define ASTEROIDS_BASIC_ASTEROID_SHAPE_H_
+#ifndef FLYING_ROCK_BASIC_ASTEROID_SHAPE_H_
+#define FLYING_ROCK_BASIC_ASTEROID_SHAPE_H_
 
 #include "vector_lines.h"
 
@@ -72,8 +72,4 @@ VectorLines const cross_asteroid = {{
 }};
 
 
-/*
-
-*/
-
-#endif /* ASTEROIDS_BASIC_ASTEROID_SHAPE_H_ */
+#endif /* FLYING_ROCK_BASIC_ASTEROID_SHAPE_H_ */

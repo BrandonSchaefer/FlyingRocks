@@ -12,6 +12,8 @@ Score:
 Lifes:
     - Need to add lifes, keep track of it and handle the logic
 
+UFO:
+    - Need to add a ufo computer in
 
 BUGS:
     - Currently when close to wrapping the asteroid will get stuck on the edge of the window

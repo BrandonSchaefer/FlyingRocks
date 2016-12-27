@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_SDL_BACKEND_H_
-#define ASTEROIDS_SDL_BACKEND_H_
+#ifndef FLYING_ROCK_SDL_BACKEND_H_
+#define FLYING_ROCK_SDL_BACKEND_H_
 
 #include <memory>
 #include <string>
@@ -36,4 +36,4 @@ public:
     virtual ~SDLBackend();
 };
 
-#endif /* ASTEROIDS_SDL_BACKEND_H_ */
+#endif /* FLYING_ROCK_SDL_BACKEND_H_ */

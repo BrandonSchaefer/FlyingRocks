@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_ASTEROID_MANAGER_H_
-#define ASTEROIDS_ASTEROID_MANAGER_H_
+#ifndef FLYING_ROCK_ASTEROID_MANAGER_H_
+#define FLYING_ROCK_ASTEROID_MANAGER_H_
 
 #include "asteroid.h"
 #include "bullet.h"
@@ -57,4 +57,4 @@ private:
     std::uniform_int_distribution<int32_t> random_y;
 };
 
-#endif /* ASTEROIDS_ASTEROID_MANAGER_H_ */
+#endif /* FLYING_ROCK_ASTEROID_MANAGER_H_ */

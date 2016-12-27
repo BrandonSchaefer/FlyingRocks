@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_POSITION_UPDATER_H_
-#define ASTEROIDS_POSITION_UPDATER_H_
+#ifndef FLYING_ROCK_POSITION_UPDATER_H_
+#define FLYING_ROCK_POSITION_UPDATER_H_
 
 #include "vector_lines.h"
 
@@ -40,4 +40,4 @@ private:
     Rectangle world;
 };
 
-#endif /* ASTEROIDS_POSITION_UPDATER_H_ */
+#endif /* FLYING_ROCK_POSITION_UPDATER_H_ */

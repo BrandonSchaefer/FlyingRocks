@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_BULLET_MANAGER_H_
-#define ASTEROIDS_BULLET_MANAGER_H_
+#ifndef FLYING_ROCK_BULLET_MANAGER_H_
+#define FLYING_ROCK_BULLET_MANAGER_H_
 
 #include "bullet.h"
 #include "geometry.h"
@@ -56,4 +56,4 @@ private:
     float reloading{0.0f};
 };
 
-#endif /* ASTEROIDS_BULLET_MANAGER_H_ */
+#endif /* FLYING_ROCK_BULLET_MANAGER_H_ */

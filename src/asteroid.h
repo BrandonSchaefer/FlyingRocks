@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_ASTEROID_H_
-#define ASTEROIDS_ASTEROID_H_
+#ifndef FLYING_ROCK_ASTEROID_H_
+#define FLYING_ROCK_ASTEROID_H_
 
 #include "geometry.h"
 #include "vector.h"
@@ -37,4 +37,4 @@ struct Asteroid
     int32_t number_of_splits;
 };
 
-#endif /* ASTEROIDS_ASTEROID_H_ */
+#endif /* FLYING_ROCK_ASTEROID_H_ */

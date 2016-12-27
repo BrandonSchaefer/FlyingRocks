@@ -23,8 +23,8 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_SDL_RENDERER_H_
-#define ASTEROIDS_SDL_RENDERER_H_
+#ifndef FLYING_ROCK_SDL_RENDERER_H_
+#define FLYING_ROCK_SDL_RENDERER_H_
 
 #include <string>
 #include <memory>
@@ -65,4 +65,4 @@ private:
     SDLRendererUPtr renderer_;
 };
 
-#endif /* ASTEROIDS_SDL_RENDERER_H_ */
+#endif /* FLYING_ROCK_SDL_RENDERER_H_ */
