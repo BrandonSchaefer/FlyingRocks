@@ -24,27 +24,76 @@
  */
 
 #include "asteroid_manager.h"
+#include "basic_asteroid_shape.h"
+#include "random_generator.h"
 
 #include <cstdlib>
+#include <functional>
 
 namespace
 {
-VectorLines const basic = {{
-    {0.0, 0.0},
-    {0.0, 10.0},
-    {10.0, 10.0},
-    {10.0, 0.0}}};
+std::vector<VectorLines> const asteroid_shapes{
+    end_asteroid,
+    snake_asteroid,
+    cross_asteroid
+};
+
+int32_t const default_number_of_splits{3};
+
+// FIXME Better speed then this
+std::uniform_real_distribution<float>  random_speed{-2.0f, 2.0f};
+std::uniform_int_distribution<int32_t> random_rotation{0, 360};
+std::uniform_int_distribution<int32_t> random_asteroid(0, asteroid_shapes.size() - 1);
 }
 
 AsteroidMananger::AsteroidMananger(Rectangle const& screen_size, int32_t starting_number) :
-    screen_size(screen_size),
-    starting_number(starting_number)
+    starting_number(starting_number),
+    random_x(0, screen_size.size.width),
+    random_y(0, screen_size.size.height)
+{
+    populate();
+}
+
+void AsteroidMananger::populate()
 {
     for (int32_t i = 0; i < starting_number; i++)
     {
-        auto new_basic = basic;
+        auto new_basic = asteroid_shapes[random_asteroid(mt())];
+        new_basic.scale(20.0f);
 
-        asteroids_.push_back({basic, {1.0, 0.0}});
+        auto new_x = static_cast<float>(random_x(mt()));
+        auto new_y = static_cast<float>(random_y(mt()));
+
+        new_basic.set_position({new_x, new_y});
+        new_basic.rotate(random_rotation(mt()));
+
+        asteroids_.push_back({new_basic,
+                             {random_speed(mt()), random_speed(mt())},
+                             default_number_of_splits});
+    }
+}
+
+std::list<Asteroid> AsteroidMananger::asteroids() const
+{
+    return asteroids_;
+}
+
+void AsteroidMananger::update(float delta)
+{
+    for (auto& a : asteroids_)
+    {
+        a.shape.move(a.direction);
+
+        // FIXME Need to rotate around the middle!
+        //a.shape.rotate(random_rotation(mt()) * delta);
+    }
+}
+
+void AsteroidMananger::update_position(PositionUpdater const& position_updater)
+{
+    for (auto& a : asteroids_)
+    {
+        position_updater.update_vector_lines(a.shape);
     }
 }
 
@@ -52,6 +101,53 @@ void AsteroidMananger::draw(SDLRenderer const& renderer) const
 {
     for (auto const& a : asteroids_)
     {
+        renderer.set_color({0xFF, 0xFF, 0xFF, 0xFF});
         a.shape.draw(renderer);
+
+        auto r = a.shape.surrounding_rect();
+        renderer.set_color({0x00, 0xFF, 0x00, 0xFF});
+        renderer.draw(r);
     }
+}
+
+bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
+{
+
+    Rectangle bullet_rect{static_cast<int32_t>(bullet.position.x),
+                          static_cast<int32_t>(bullet.position.y),
+                          bullet.size.width, bullet.size.height};
+
+    for (auto it = asteroids_.begin(); it != asteroids_.end(); ++it)
+    {
+        if (it->shape.surrounding_rect().colliding(bullet_rect))
+        {
+            /* Create 2 new asteroids with a different shape then parent and different speeds
+            */
+            Asteroid new_asteroid = *it;
+            new_asteroid.number_of_splits--;
+            if (new_asteroid.number_of_splits > 0)
+            {
+                new_asteroid.shape.scale(0.5f);
+                //new_asteroid.shape = asteroid_shapes[random_asteroid(mt())];
+
+                new_asteroid.direction = {random_speed(mt()), random_speed(mt())};
+                asteroids_.push_back(new_asteroid);
+
+                new_asteroid.direction = {random_speed(mt()), random_speed(mt())};
+                asteroids_.push_back(new_asteroid);
+            }
+
+            asteroids_.erase(it);
+
+            if (asteroids_.empty())
+            {
+                populate();
+            }
+
+            return true;
+        }
+    }
+    printf("Number %lu\n", asteroids_.size());
+
+    return false;
 }

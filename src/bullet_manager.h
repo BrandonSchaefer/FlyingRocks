@@ -28,9 +28,10 @@
 
 #include "bullet.h"
 #include "geometry.h"
+#include "position_updater.h"
 #include "vector.h"
 
-#include <vector>
+#include <list>
 
 class BulletManager
 {
@@ -38,11 +39,21 @@ public:
     void create_bullet(Vector const& position, Vector const& direction);
 
     void update(float delta);
+    void update_position(PositionUpdater const& position_updater);
 
-    std::vector<Bullet> bullets() const;
+    void draw(SDLRenderer const& renderer);
+
+    std::list<Bullet>::iterator begin();
+    std::list<Bullet>::const_iterator cbegin();
+
+    std::list<Bullet>::iterator end();
+    std::list<Bullet>::const_iterator cend();
+
+    std::list<Bullet>::iterator erase(std::list<Bullet>::iterator const& it);
 
 private:
-    std::vector<Bullet> bullets_;
+    std::list<Bullet> bullets_;
+    float reloading{0.0f};
 };
 
 #endif /* ASTEROIDS_BULLET_MANAGER_H_ */

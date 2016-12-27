@@ -34,6 +34,7 @@ struct Asteroid
 {
     VectorLines shape;
     Vector direction;
+    int32_t number_of_splits;
 };
 
 #endif /* ASTEROIDS_ASTEROID_H_ */

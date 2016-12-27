@@ -49,6 +49,8 @@ public:
     void draw(Point const& p1, Point const& p2) const;
     void draw(std::vector<Point> const& points) const;
 
+    void draw(std::vector<Rectangle> const& rect) const;
+
     void draw(Rectangle const& rect) const;
     void draw_solid(Rectangle const& rect) const;
 

@@ -18,6 +18,7 @@ set (ASTEROIDS_LOADER_SRC
     sdl_error.cpp
     sdl_renderer.cpp
     ship.cpp
+    random_generator.cpp
     timer.cpp
     vector.cpp
     vector_lines.cpp
@@ -34,6 +35,7 @@ set (ASTEROIDS_LOADER_HDR
     sdl_error.h
     sdl_renderer.h
     ship.h
+    random_generator.h
     timer.h
     vector.h
     vector_lines.h

@@ -50,19 +50,17 @@ public:
     void set_position(Vector const& position);
 
     void add_point(Vector const& point);
-    Rectangle surrounding_rect();
+    Rectangle surrounding_rect() const;
 
     Vector first_position() const;
 
     // TODO This should be part of a different class maybe?
     void draw(SDLRenderer const& renderer) const;
 
-    // TODO Return a list of points, and make a View class possibly
-    std::vector<VectorPoint> vector_points;
 private:
     void update_positions_from_direction();
 
-
+    std::vector<VectorPoint> vector_points;
 };
 
 #endif /* ASTEROIDS_VECTOR_LINES_H_ */

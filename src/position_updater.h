@@ -34,6 +34,7 @@ public:
     PositionUpdater(Rectangle const& world_size);
 
     void update_vector_lines(VectorLines& lines) const;
+    void update_vector(Vector& position) const;
 
 private:
     Rectangle world;

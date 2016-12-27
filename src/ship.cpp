@@ -78,7 +78,7 @@ void Ship::update(float delta)
     }
 
     ship.move(velocity);
-    position = ship.vector_points[0].position;
+    position = ship.first_position();
 }
 
 void Ship::update_position(PositionUpdater const& position_updater)

@@ -32,29 +32,80 @@ namespace
 Size const size{3, 3};
 float const lifetime{1.0f};
 float const speed_mag{15.0f};
+float const reload_time{0.2f};
 }
 
 void BulletManager::create_bullet(Vector const& position, Vector const& direction)
 {
-    auto speed = direction;
-    speed.set_magnitude(speed_mag);
+    if (reloading <= 0.0f)
+    {
+        auto speed = direction;
+        speed.set_magnitude(speed_mag);
 
-    bullets_.push_back({position, speed, size, lifetime});
+        bullets_.push_back({position, speed, size, lifetime});
+
+        reloading = reload_time;
+    }
 }
 
 void BulletManager::update(float delta)
 {
-    for (auto& b : bullets_)
+    for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
     {
-        b.lifetime -= delta;
-        b.position += b.speed;
+        it->lifetime -= delta;
+        it->position += it->speed;
+
+        if (it->lifetime < 0.0f)
+        {
+            it = bullets_.erase(it);
+        }
     }
 
-    bullets_.erase(std::remove_if(bullets_.begin(), bullets_.end(),
-        [](Bullet const& b) { return b.lifetime <= 0.0f; }), bullets_.end());
+    reloading -= delta;
 }
 
-std::vector<Bullet> BulletManager::bullets() const
+void BulletManager::update_position(PositionUpdater const& position_updater)
 {
-    return bullets_;
+    for (auto& b : bullets_)
+    {
+        position_updater.update_vector(b.position);
+    }
+}
+
+void BulletManager::draw(SDLRenderer const& renderer)
+{
+    std::vector<Rectangle> rects;
+    for (auto const& b : bullets_)
+    {
+        auto new_x = static_cast<int32_t>(b.position.x);
+        auto new_y = static_cast<int32_t>(b.position.y);
+        rects.push_back({{new_x, new_y}, {b.size.width, b.size.height}});
+    }
+
+    renderer.draw(rects);
+}
+
+std::list<Bullet>::iterator BulletManager::begin()
+{
+    return bullets_.begin();
+}
+
+std::list<Bullet>::const_iterator BulletManager::cbegin()
+{
+    return bullets_.cbegin();
+}
+
+std::list<Bullet>::iterator BulletManager::end()
+{
+    return bullets_.end();
+}
+
+std::list<Bullet>::const_iterator BulletManager::cend()
+{
+    return bullets_.cend();
+}
+
+std::list<Bullet>::iterator BulletManager::erase(std::list<Bullet>::iterator const& it)
+{
+    return bullets_.erase(it);
 }

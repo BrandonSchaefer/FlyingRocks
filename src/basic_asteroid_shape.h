@@ -23,33 +23,57 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_GEOMETRY_H_
-#define ASTEROIDS_GEOMETRY_H_
+#ifndef ASTEROIDS_BASIC_ASTEROID_SHAPE_H_
+#define ASTEROIDS_BASIC_ASTEROID_SHAPE_H_
 
-#include <cstdint>
+#include "vector_lines.h"
 
-struct Point
-{
-    int32_t x;
-    int32_t y;
-};
+VectorLines const end_asteroid = {{
+    {1.0f, 0.0f},
+    {0.0f, 1.0f},
+    {0.0f, 4.0f},
+    {3.0f, 6.0f},
+    {4.0f, 5.0f},
+    {5.0f, 6.0f},
+    {7.0f, 4.0f},
+    {6.0f, 3.0f},
+    {7.0f, 1.0f},
+    {4.0f, 0.0f}
+}};
 
-struct Size
-{
-    int32_t width;
-    int32_t height;
-};
+VectorLines const snake_asteroid = {{
+    {0.0f, 2.0f},
+    {0.0f, 3.0f},
+    {1.0f, 5.0f},
+    {2.0f, 4.0f},
+    {3.0f, 5.0f},
+    {4.0f, 4.0f},
+    {2.0f, 3.0f},
+    {4.0f, 2.0f},
+    {4.0f, 1.0f},
+    {3.0f, 0.0f},
+    {1.0f, 0.0f},
+    {2.0f, 2.0f}
+}};
 
-// TODO Maybe extend this to RenderableRectangle?
-struct Rectangle
-{
-    void expand(int32_t amount);
-    void shrink(int32_t amount);
+VectorLines const cross_asteroid = {{
+    {0.0f, 2.0f},
+    {1.0f, 3.0f},
+    {0.0f, 4.0f},
+    {2.0f, 5.0f},
+    {3.0f, 4.0f},
+    {5.0f, 5.0f},
+    {6.0f, 3.0f},
+    {5.0f, 2.0f},
+    {6.0f, 1.0f},
+    {5.0f, 0.0f},
+    {4.0f, 1.0f},
+    {2.0f, 0.0f}
+}};
 
-    bool colliding(Rectangle const& r);
 
-    Point top_left;
-    Size size;
-};
+/*
 
-#endif /* ASTEROIDS_GEOMETRY_H_ */
+*/
+
+#endif /* ASTEROIDS_BASIC_ASTEROID_SHAPE_H_ */

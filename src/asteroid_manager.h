@@ -27,21 +27,34 @@
 #define ASTEROIDS_ASTEROID_MANAGER_H_
 
 #include "asteroid.h"
+#include "bullet.h"
+#include "position_updater.h"
 #include "sdl_renderer.h"
+
+#include <list>
+#include <random>
 
 class AsteroidMananger
 {
 public:
     explicit AsteroidMananger(Rectangle const& screen_size, int32_t starting_number = 5);
 
-    std::vector<Asteroid> asteroids() const;
+    std::list<Asteroid> asteroids() const;
 
+    void update(float delta);
+    void update_position(PositionUpdater const& position_updater);
     void draw(SDLRenderer const& renderer) const;
 
+    bool bullet_colliding(Bullet const& bullet);
+
 private:
-    Rectangle screen_size;
+    void populate();
+
     int32_t starting_number;
-    std::vector<Asteroid> asteroids_;
+    std::list<Asteroid> asteroids_;
+
+    std::uniform_int_distribution<int32_t> random_x;
+    std::uniform_int_distribution<int32_t> random_y;
 };
 
 #endif /* ASTEROIDS_ASTEROID_MANAGER_H_ */

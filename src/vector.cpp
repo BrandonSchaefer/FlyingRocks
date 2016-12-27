@@ -119,3 +119,14 @@ void Vector::rotate(float angle)
     x = new_x;
     y = new_y;
 }
+
+void Vector::rotate(float angle, Vector const& pivot)
+{
+    x -= pivot.x;
+    y -= pivot.y;
+
+    rotate(angle);
+
+    x += pivot.x;
+    y += pivot.y;
+}

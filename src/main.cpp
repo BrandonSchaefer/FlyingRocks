@@ -27,6 +27,7 @@
 #include "sdl_backend.h"
 #include "sdl_renderer.h"
 
+#include "asteroid_manager.h"
 #include "bullet_manager.h"
 #include "position_updater.h"
 #include "vector_lines.h"
@@ -56,17 +57,6 @@ namespace
 float const frames_per_second = 59.5f;
 float const one_second = 1000.0f;
 
-int mod(int x, int y)
-{
-    int m = x % y;
-    if (m < 0.0f)
-    {
-        m += y;
-    }
-
-    return m;
-}
-
 // Set viewport to smaller then this to get an unrendered section
 Rectangle const default_size{{0, 0}, {800, 600}};
 
@@ -83,7 +73,7 @@ int main()
     // expand size so we can cheap warp
     auto expanded = default_size;
     // Use ship size? Or largest object size
-    expanded.expand(50);
+    //expanded.expand(50);
 
     SDLBackend backend;
     SDLRenderer renderer("Asteroids", default_size.size);
@@ -94,10 +84,9 @@ int main()
     float width  = expanded.size.width;
     float height = expanded.size.height;
 
+    AsteroidMananger asteroid_manager(default_size);
     BulletManager bullet_manager;
     PositionUpdater position_updater(expanded);
-
-    VectorLines v;
 
     Ship s({width/2, height/2}, {0.0, -7.5});
 
@@ -122,7 +111,6 @@ int main()
                     float x = event.button.x;
                     float y = event.button.y;
                     s.ship.set_position({x, y});
-                    //v.add_point({x, y});
                 }
                     break;
                 case SDL_KEYDOWN:
@@ -149,15 +137,10 @@ int main()
                 {
                     if (event.key.keysym.sym == SDLK_RIGHT)
                         s.stop_turning();
-                        //v.scale(1.1f);
                     else if (event.key.keysym.sym == SDLK_LEFT)
                         s.stop_turning();
-                        //v.scale(0.9f);
                     else if (event.key.keysym.sym == SDLK_UP)
                         s.stop_thruster();
-                        //v.move({0.0f, -10.0f});
-                    //else if (event.key.keysym.sym == SDLK_DOWN)
-                        //v.move({0.0f, 10.0f});
                 }
                     break;
                 case SDL_QUIT:
@@ -175,20 +158,37 @@ int main()
         // Update
         s.update(delta_time);
         bullet_manager.update(delta_time);
+        asteroid_manager.update(delta_time);
+
+        // TODO The ship should hold onto the *gun*. How could we do collision then?
+        for (auto it = bullet_manager.begin(); it != bullet_manager.end(); ++it)
+        {
+            if (asteroid_manager.bullet_colliding(*it))
+            {
+                it = bullet_manager.erase(it);
+            }
+        }
+        
+        for (auto const& a : asteroid_manager.asteroids())
+        {
+            auto asteroid_rect = a.shape.surrounding_rect();
+            if (s.ship.surrounding_rect().colliding(asteroid_rect))
+            {
+                printf("YOU LOSE\n");
+            }
+        }
 
         // Update Position based on locations
         s.update_position(position_updater);
+        bullet_manager.update_position(position_updater);
+        asteroid_manager.update_position(position_updater);
 
         SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
         // Draw
         s.ship.draw(renderer);
-
-        for (auto const& b : bullet_manager.bullets())
-        {
-            SDL_Rect r{mod(b.position.x, width), mod(b.position.y, height), b.size.width, b.size.height};
-            SDL_RenderFillRect(sdl_renderer, &r);
-        }
+        bullet_manager.draw(renderer);
+        asteroid_manager.draw(renderer);
 
         SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xFF, 0x00, 0xFF);
         auto r = s.ship.surrounding_rect();

@@ -23,33 +23,12 @@
  * SOFTWARE.
  */
 
-#ifndef ASTEROIDS_GEOMETRY_H_
-#define ASTEROIDS_GEOMETRY_H_
+#include "random_generator.h"
 
-#include <cstdint>
-
-struct Point
+std::mt19937& mt()
 {
-    int32_t x;
-    int32_t y;
-};
+    static thread_local std::random_device random_device;
+    static thread_local std::mt19937 mt(random_device());
+    return mt;
+}
 
-struct Size
-{
-    int32_t width;
-    int32_t height;
-};
-
-// TODO Maybe extend this to RenderableRectangle?
-struct Rectangle
-{
-    void expand(int32_t amount);
-    void shrink(int32_t amount);
-
-    bool colliding(Rectangle const& r);
-
-    Point top_left;
-    Size size;
-};
-
-#endif /* ASTEROIDS_GEOMETRY_H_ */

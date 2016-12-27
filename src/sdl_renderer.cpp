@@ -88,6 +88,17 @@ void SDLRenderer::draw(std::vector<Point> const& points) const
     SDL_RenderDrawLines(renderer_.get(), sdl_points.data(), sdl_points.size());
 }
 
+void SDLRenderer::draw(std::vector<Rectangle> const& rect) const
+{
+    std::vector<SDL_Rect> sdl_rects;
+    for (auto const& r : rect)
+    {
+        sdl_rects.push_back({r.top_left.x, r.top_left.y, r.size.width, r.size.height});
+    }
+
+    SDL_RenderDrawRects(renderer_.get(), sdl_rects.data(), sdl_rects.size());
+}
+
 void SDLRenderer::draw(Rectangle const& rect) const
 {
     SDL_Rect sdl_rect{rect.top_left.x, rect.top_left.y, rect.size.width, rect.size.height};

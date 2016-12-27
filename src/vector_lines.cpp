@@ -69,9 +69,14 @@ void VectorLines::move(Vector const& direction)
 
 void VectorLines::rotate(float angle)
 {
-    for (auto& vector_point : vector_points)
+    //auto bounding_rect = surrounding_rect();
+    //Vector middle = {static_cast<float>(bounding_rect.top_left.x + bounding_rect.size.width / 2),
+                     //static_cast<float>(bounding_rect.top_left.y + bounding_rect.size.height / 2)};
+
+    for (size_t i = 0; i < vector_points.size(); i++)
     {
-        vector_point.direction.rotate(angle);
+        //vector_points[i].direction.rotate(angle, middle);
+        vector_points[i].direction.rotate(angle);
     }
 
     update_positions_from_direction();
@@ -79,9 +84,12 @@ void VectorLines::rotate(float angle)
 
 void VectorLines::set_position(Vector const& position)
 {
-    vector_points[0].position = position;
+    if (!vector_points.empty())
+    {
+        vector_points[0].position = position;
 
-    update_positions_from_direction();
+        update_positions_from_direction();
+    }
 }
 
 void VectorLines::add_point(Vector const& point)
@@ -104,7 +112,7 @@ void VectorLines::add_point(Vector const& point)
     }
 }
 
-Rectangle VectorLines::surrounding_rect()
+Rectangle VectorLines::surrounding_rect() const
 {
     int32_t lowest_x  = std::numeric_limits<int32_t>::max();
     int32_t highest_x = 0;

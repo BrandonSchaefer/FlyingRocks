@@ -50,6 +50,7 @@ public:
     void limit(float max);
 
     void rotate(float degree);
+    void rotate(float degree, Vector const& pivot);
 
     float x;
     float y;
