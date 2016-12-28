@@ -147,7 +147,7 @@ bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
             return true;
         }
     }
-    printf("Number %lu\n", asteroids_.size());
+    //printf("Number %lu\n", asteroids_.size());
 
     return false;
 }

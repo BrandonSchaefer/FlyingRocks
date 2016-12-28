@@ -54,14 +54,12 @@ void Ship::update(float delta)
         {
             acceleration.rotate(-360 * delta);
             ship.rotate(-360 * delta);
-            //ship.scale(1 - 1 * delta);
             break;
         }
         case TurnDirection::right:
         {
             acceleration.rotate(360 * delta);
             ship.rotate(360 * delta);
-            //ship.scale(1 + 1 * delta);
             break;
         }
         default:

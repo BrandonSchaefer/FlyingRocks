@@ -73,7 +73,7 @@ int main()
     // expand size so we can cheap warp
     auto expanded = default_size;
     // Use ship size? Or largest object size
-    //expanded.expand(50);
+    expanded.expand(50);
 
     SDLBackend backend;
     SDLRenderer renderer("Flying Rocks", default_size.size);
@@ -97,6 +97,8 @@ int main()
     uint32_t frames = 0;
 
     bool done = false;
+
+    bool shooting = false;
     while (!done)
     {
         t.start();
@@ -111,8 +113,8 @@ int main()
                     float x = event.button.x;
                     float y = event.button.y;
                     s.ship.set_position({x, y});
-                }
                     break;
+                }
                 case SDL_KEYDOWN:
                 {
                     if (event.key.keysym.sym == SDLK_UP)
@@ -129,26 +131,42 @@ int main()
                     }
                     else if (event.key.keysym.sym == SDLK_SPACE)
                     {
-                        bullet_manager.create_bullet(s.pos(), s.accel());
+                        // TODO move this to the ship possibly
+                        shooting = true;
                     }
                     break;
                 }
                 case SDL_KEYUP:
                 {
                     if (event.key.keysym.sym == SDLK_RIGHT)
+                    {
                         s.stop_turning();
+                    }
                     else if (event.key.keysym.sym == SDLK_LEFT)
+                    {
                         s.stop_turning();
+                    }
                     else if (event.key.keysym.sym == SDLK_UP)
+                    {
                         s.stop_thruster();
-                }
+                    }
+                    else if (event.key.keysym.sym == SDLK_SPACE)
+                    {
+                        shooting = false;
+                    }
                     break;
+                }
                 case SDL_QUIT:
                     done = true;
                     break;
                 default:
                     break;
             }
+        }
+
+        if (shooting)
+        {
+            bullet_manager.create_bullet(s.pos(), s.accel());
         }
 
         SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x0, 0x0, 0xFF);
@@ -174,7 +192,7 @@ int main()
             auto asteroid_rect = a.shape.surrounding_rect();
             if (s.ship.surrounding_rect().colliding(asteroid_rect))
             {
-                printf("YOU LOSE\n");
+                //printf("YOU LOSE\n");
             }
         }
 

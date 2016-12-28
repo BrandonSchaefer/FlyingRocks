@@ -20,8 +20,3 @@ Sound:
 
 UI:
     - Need to finish up the user interface for score + lifes and menus
-
-BUGS:
-    - Currently when close to wrapping the asteroid will get stuck on the edge of the window
-      and not warp to the other side (even with vel that *should* get there). I assume some
-      rounding issue somewhere.

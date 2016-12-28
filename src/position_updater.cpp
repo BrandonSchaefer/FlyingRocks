@@ -25,6 +25,8 @@
 
 #include "position_updater.h"
 
+#include <cmath>
+
 namespace
 {
 int32_t mod(int32_t x, int32_t y)
@@ -53,8 +55,8 @@ void PositionUpdater::update_vector_lines(VectorLines& lines) const
     if (main_point.x < 0 || main_point.x >= width ||
         main_point.y < 0 || main_point.y >= height)
     {
-        auto new_x = static_cast<float>(mod(main_point.x, width));
-        auto new_y = static_cast<float>(mod(main_point.y, height));
+        auto new_x = static_cast<float>(mod(floor(main_point.x), width));
+        auto new_y = static_cast<float>(mod(floor(main_point.y), height));
         lines.set_position({new_x, new_y});
     }
 }
@@ -67,7 +69,7 @@ void PositionUpdater::update_vector(Vector& position) const
     if (position.x < 0 || position.x >= width ||
         position.y < 0 || position.y >= height)
     {
-        position.x = static_cast<float>(mod(position.x, width));
-        position.y = static_cast<float>(mod(position.y, height));
+        position.x = static_cast<float>(mod(floor(position.x), width));
+        position.y = static_cast<float>(mod(floor(position.y), height));
     }
 }
