@@ -69,17 +69,22 @@ void VectorLines::move(Vector const& direction)
 
 void VectorLines::rotate(float angle)
 {
-    //auto bounding_rect = surrounding_rect();
-    //Vector middle = {static_cast<float>(bounding_rect.top_left.x + bounding_rect.size.width / 2),
-                     //static_cast<float>(bounding_rect.top_left.y + bounding_rect.size.height / 2)};
+    auto bounding_rect = surrounding_rect();
+    Vector middle = {static_cast<float>(bounding_rect.top_left.x + bounding_rect.size.width / 2),
+                     static_cast<float>(bounding_rect.top_left.y + bounding_rect.size.height / 2)};
 
     for (size_t i = 0; i < vector_points.size(); i++)
     {
-        //vector_points[i].direction.rotate(angle, middle);
-        vector_points[i].direction.rotate(angle);
+        vector_points[i].position.rotate(angle, middle);
     }
 
-    update_positions_from_direction();
+    update_directions_from_positions();
+
+    auto t = vector_points;
+    vector_points.clear();
+
+    for (auto const& m : t)
+        add_point(m.position);
 }
 
 void VectorLines::set_position(Vector const& position)
@@ -152,6 +157,16 @@ void VectorLines::update_positions_from_direction()
             vector_points[i - 1].direction;
     }
 
+}
+
+void VectorLines::update_directions_from_positions()
+{
+    for (size_t i = 0; i < vector_points.size(); i++)
+    {
+        auto next_index = (i + 1) % vector_points.size();
+         vector_points[i].direction =
+            vector_points[next_index].position - vector_points[i].position;
+    }
 }
 
 Vector VectorLines::first_position() const

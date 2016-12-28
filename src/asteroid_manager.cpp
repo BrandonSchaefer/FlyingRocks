@@ -85,7 +85,7 @@ void AsteroidMananger::update(float delta)
         a.shape.move(a.direction);
 
         // FIXME Need to rotate around the middle!
-        //a.shape.rotate(random_rotation(mt()) * delta);
+        a.shape.rotate(90.0f * delta);
     }
 }
 
@@ -104,9 +104,9 @@ void AsteroidMananger::draw(SDLRenderer const& renderer) const
         renderer.set_color({0xFF, 0xFF, 0xFF, 0xFF});
         a.shape.draw(renderer);
 
-        auto r = a.shape.surrounding_rect();
-        renderer.set_color({0x00, 0xFF, 0x00, 0xFF});
-        renderer.draw(r);
+        //auto r = a.shape.surrounding_rect();
+        //renderer.set_color({0x00, 0xFF, 0x00, 0xFF});
+        //renderer.draw(r);
     }
 }
 
@@ -130,10 +130,10 @@ bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
                 new_asteroid.shape.scale(0.5f);
                 //new_asteroid.shape = asteroid_shapes[random_asteroid(mt())];
 
-                new_asteroid.direction = {random_speed(mt()), random_speed(mt())};
+                new_asteroid.direction = {random_speed(mt()) + 1.0f, random_speed(mt()) + 1.0f};
                 asteroids_.push_back(new_asteroid);
 
-                new_asteroid.direction = {random_speed(mt()), random_speed(mt())};
+                new_asteroid.direction = {random_speed(mt()) + 1.0f, random_speed(mt()) + 1.0f};
                 asteroids_.push_back(new_asteroid);
             }
 
@@ -147,7 +147,6 @@ bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
             return true;
         }
     }
-    //printf("Number %lu\n", asteroids_.size());
 
     return false;
 }

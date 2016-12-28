@@ -2,10 +2,6 @@ Animation:
     - Need to setup animations for destroyed ship and asteroids
     - Need a second VectorLine of the ship with flame out of the back with thruster on
 
-Rotation of VectorLines:
-    - Need to rotate around the middle of the VectorLine (such as ship/asteroid).
-        Currently it looks bad
-
 Score:
     - Need to draw the score and keep track of it
 
@@ -20,3 +16,7 @@ Sound:
 
 UI:
     - Need to finish up the user interface for score + lifes and menus
+
+Asteroids:
+    - Need to fix the spawn points (they can spawn in a ship atm)
+    - Need to pick a different asteroid when it gets destroyed

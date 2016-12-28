@@ -59,6 +59,7 @@ public:
 
 private:
     void update_positions_from_direction();
+    void update_directions_from_positions();
 
     std::vector<VectorPoint> vector_points;
 };

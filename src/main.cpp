@@ -73,7 +73,7 @@ int main()
     // expand size so we can cheap warp
     auto expanded = default_size;
     // Use ship size? Or largest object size
-    expanded.expand(50);
+    //expanded.expand(50);
 
     SDLBackend backend;
     SDLRenderer renderer("Flying Rocks", default_size.size);
@@ -208,11 +208,11 @@ int main()
         bullet_manager.draw(renderer);
         asteroid_manager.draw(renderer);
 
-        SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xFF, 0x00, 0xFF);
-        auto r = s.ship.surrounding_rect();
-        SDL_Rect ship_rect{r.top_left.x, r.top_left.y, r.size.width, r.size.height};
+        //SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xFF, 0x00, 0xFF);
+        //auto r = s.ship.surrounding_rect();
+        //SDL_Rect ship_rect{r.top_left.x, r.top_left.y, r.size.width, r.size.height};
 
-        SDL_RenderDrawRect(sdl_renderer, &ship_rect);
+        //SDL_RenderDrawRect(sdl_renderer, &ship_rect);
 
         SDL_RenderPresent(sdl_renderer);
 
