@@ -30,6 +30,8 @@ set (FLYING_ROCK_LOADER_HDR
     bullet.h
     bullet_manager.h
     color.h
+    default_asteroid_shapes.h
+    default_ship_shape.h
     position_updater.h
     sdl_backend.h
     sdl_error.h

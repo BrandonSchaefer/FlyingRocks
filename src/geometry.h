@@ -42,8 +42,8 @@ struct Size
 
 struct Rectangle
 {
-    void expand(int32_t amount);
-    void shrink(int32_t amount);
+    Rectangle expand(int32_t amount) const;
+    Rectangle shrink(int32_t amount) const;
 
     bool colliding(Rectangle const& r);
 

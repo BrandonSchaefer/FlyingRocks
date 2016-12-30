@@ -46,22 +46,39 @@ PositionUpdater::PositionUpdater(Rectangle const& world_size) :
 {
 }
 
-void PositionUpdater::update_vector_lines(VectorLines& lines) const
+// If all points are off screen update the main point and update the rest
+// FIXME Need to fix the set position based on the edge of map and set the closet point to it
+bool PositionUpdater::update_vector_lines(VectorLines& lines) const
 {
-    auto main_point = lines.first_position();
     auto width  = world.size.width;
     auto height = world.size.height;
 
-    if (main_point.x < 0 || main_point.x >= width ||
-        main_point.y < 0 || main_point.y >= height)
+    bool all_offscreen = true;
+
+    for (auto const& p : lines.positions())
     {
+        if (p.x >= 0 && p.x < width &&
+            p.y >= 0 && p.y < height)
+        {
+            all_offscreen = false;
+        }
+    }
+
+    // Need to find point that is closet to the bound
+    if (all_offscreen)
+    {
+        auto main_point = lines.first_position();
         auto new_x = static_cast<float>(mod(floor(main_point.x), width));
         auto new_y = static_cast<float>(mod(floor(main_point.y), height));
         lines.set_position({new_x, new_y});
+
+        return true;
     }
+
+    return false;
 }
 
-void PositionUpdater::update_vector(Vector& position) const
+bool PositionUpdater::update_vector(Vector& position) const
 {
     auto width  = world.size.width;
     auto height = world.size.height;
@@ -71,5 +88,9 @@ void PositionUpdater::update_vector(Vector& position) const
     {
         position.x = static_cast<float>(mod(floor(position.x), width));
         position.y = static_cast<float>(mod(floor(position.y), height));
+
+        return true;
     }
+
+    return false;
 }

@@ -33,8 +33,8 @@ class PositionUpdater
 public:
     PositionUpdater(Rectangle const& world_size);
 
-    void update_vector_lines(VectorLines& lines) const;
-    void update_vector(Vector& position) const;
+    bool update_vector_lines(VectorLines& lines) const;
+    bool update_vector(Vector& position) const;
 
 private:
     Rectangle world;

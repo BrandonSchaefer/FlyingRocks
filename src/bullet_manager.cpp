@@ -31,7 +31,7 @@ namespace
 {
 Size const size{3, 3};
 float const lifetime{1.0f};
-float const speed_mag{15.0f};
+float const speed_mag{1000.0f};
 float const reload_time{0.2f};
 }
 
@@ -53,7 +53,7 @@ void BulletManager::update(float delta)
     for (auto it = bullets_.begin(); it != bullets_.end(); ++it)
     {
         it->lifetime -= delta;
-        it->position += it->speed;
+        it->position += it->speed * delta;
 
         if (it->lifetime < 0.0f)
         {

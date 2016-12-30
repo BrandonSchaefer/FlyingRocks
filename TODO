@@ -4,6 +4,7 @@ Animation:
 
 Score:
     - Need to draw the score and keep track of it
+    - Large = 30, Medium = 40, Small = 100
 
 Lifes:
     - Need to add lifes, keep track of it and handle the logic
@@ -20,3 +21,16 @@ UI:
 Asteroids:
     - Need to fix the spawn points (they can spawn in a ship atm)
     - Need to pick a different asteroid when it gets destroyed
+
+Scale:
+    - Since all the objects are very small to start with Ill need to come up
+      with a good scale factor based on the screen width/height to maintain
+      consistent sizes (as well as removing hard coded values)
+
+Collision:
+    - Need to do better here, generating a rectangle for a complex vector line
+      gives poor collision boxes
+
+Warping:
+    - Need to handle warping better. When an object is out of bounds we need to
+      warp it to the edge of the bounds vs warping in bounds.

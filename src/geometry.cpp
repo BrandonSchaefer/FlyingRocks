@@ -25,22 +25,24 @@
 
 #include "geometry.h"
 
-void Rectangle::expand(int32_t amount)
+Rectangle Rectangle::expand(int32_t amount) const
 {
-    top_left.x -= amount;
-    top_left.y -= amount;
-
-    size.width  += amount * 2;
-    size.height += amount * 2;
+    return {
+        top_left.x - amount,
+        top_left.y - amount,
+        size.width  + amount * 2,
+        size.height + amount * 2
+    };
 }
 
-void Rectangle::shrink(int32_t amount)
+Rectangle Rectangle::shrink(int32_t amount) const
 {
-    top_left.x += amount;
-    top_left.y += amount;
-
-    size.width  -= amount * 2;
-    size.height -= amount * 2;
+    return {
+        top_left.x + amount,
+        top_left.y + amount,
+        size.width  - amount * 2,
+        size.height - amount * 2
+    };
 }
 
 bool Rectangle::colliding(Rectangle const& r)

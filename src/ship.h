@@ -27,6 +27,7 @@
 #define FLYING_ROCK_SHIP_H_
 
 #include "position_updater.h"
+#include "sdl_renderer.h"
 #include "vector.h"
 #include "vector_lines.h"
 
@@ -45,23 +46,38 @@ public:
     void update(float delta);
     void update_position(PositionUpdater const& position_updater);
 
+    void draw(SDLRenderer const& renderer) const;
+
     void start_thruster();
     void stop_thruster();
 
     void start_turning(TurnDirection dir);
     void stop_turning();
 
+    //void set_position(Vector const& position);
+    void reset(Vector const& position, Vector const& acceleration);
+
+    bool invulnerable() const;
+
     Vector pos() const;
     Vector accel() const;
 
-    VectorLines ship;
+    Rectangle surrounding_rect() const;
 
 private:
     Vector acceleration;
     Vector velocity;
-    Vector position;
+    VectorLines ship;
+    VectorLines ship_moving;
 
     bool thruster_on{false};
+
+    float invulnerable_time{0.0f};
+
+    // TODO create an animation class
+    float blink_timer{0.0f};
+    bool should_blink{false};
+
     TurnDirection turn_direction{TurnDirection::none};
 };
 

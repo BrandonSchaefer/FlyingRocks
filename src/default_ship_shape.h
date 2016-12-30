@@ -23,46 +23,51 @@
  * SOFTWARE.
  */
 
-#ifndef FLYING_ROCK_VECTOR_LINES_H_
-#define FLYING_ROCK_VECTOR_LINES_H_
 
-#include "geometry.h"
-#include "sdl_renderer.h"
-#include "vector.h"
+#ifndef FLYING_ROCK_DEFAULT_SHIP_SHAPE_H_
+#define FLYING_ROCK_DEFAULT_SHIP_SHAPE_H_
 
-#include <vector>
+#include "vector_lines.h"
 
-struct VectorPoint
-{
-    Vector position;
-    Vector direction;
-};
+/*
+ship
+         0
+        / \
+       /   \
+      /     \
+     2-------3
+    /         \
+    1         4
 
-class VectorLines
-{
-public:
-    VectorLines() = default;
-    VectorLines(std::vector<Vector> const& points);
+ship moving - need to go from 5 -> 3, then 3 -> 6
+         0
+        / \
+       /   \
+      /     \
+     2--3-5--6
+    /   \/    \
+    1   \/      7
+        4
+*/
 
-    void scale(float scalar);
-    void move(Vector const& direction);
-    void rotate(float degrees);
-    void set_position(Vector const& position);
+VectorLines const default_ship = {{
+    {4.0f, 0.0f},  // 0
+    {1.0f, 10.0f}, // 1
+    {2.0f, 8.0f},  // 2
+    {6.0f, 8.0f},  // 3
+    {7.0f, 10.0f}  // 4
+}};
 
-    void add_point(Vector const& point);
-    Rectangle surrounding_rect() const;
+VectorLines const default_ship_moving = {{
+    {4.0f, 0.0f},  // 0
+    {1.0f, 10.0f}, // 1
+    {2.0f, 8.0f},  // 2
+    {3.0f, 8.0f},  // 3
+    {4.0f, 11.0f}, // 4
+    {5.0f, 8.0f},  // 5
+    {3.0f, 8.0f},  // 3
+    {6.0f, 8.0f},  // 6
+    {7.0f, 10.0f}  // 7
+}};
 
-    Vector first_position() const;
-    std::vector<Vector> positions() const;
-
-    // TODO This should be part of a different class maybe?
-    void draw(SDLRenderer const& renderer) const;
-
-private:
-    void update_positions_from_direction();
-    void update_directions_from_positions();
-
-    std::vector<VectorPoint> vector_points;
-};
-
-#endif /* FLYING_ROCK_VECTOR_LINES_H_ */
+#endif /* FLYING_ROCK_DEFAULT_SHIP_SHAPE_H_ */

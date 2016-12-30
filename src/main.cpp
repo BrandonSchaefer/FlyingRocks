@@ -54,41 +54,35 @@ std::ostream& operator<<(std::ostream& out, Vector const& v)
 namespace
 {
 // FIXME Should depend on the display but 59.5 is fine for now
-float const frames_per_second = 59.5f;
-float const one_second = 1000.0f;
+float const default_fps{59.5f};
+//float const frames_per_second{144.0f};
+float const one_second{1000.0f};
 
 // Set viewport to smaller then this to get an unrendered section
 Rectangle const default_size{{0, 0}, {800, 600}};
 
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     // FIXME move to a real random generator
     srand(time(nullptr));
 
-    //float width = 800;
-    //float height = 600;
-
-    // expand size so we can cheap warp
-    auto expanded = default_size;
-    // Use ship size? Or largest object size
-    //expanded.expand(50);
+    // TODO get fps from command line
+    float frames_per_second = default_fps;
 
     SDLBackend backend;
     SDLRenderer renderer("Flying Rocks", default_size.size);
     auto sdl_renderer = renderer.renderer();
-    SDL_Rect viewport{expanded.top_left.x, expanded.top_left.y, expanded.size.width, expanded.size.height};
-    SDL_RenderSetViewport(sdl_renderer, &viewport);
 
-    float width  = expanded.size.width;
-    float height = expanded.size.height;
+    float width  = default_size.size.width;
+    float height = default_size.size.height;
 
     AsteroidMananger asteroid_manager(default_size);
     BulletManager bullet_manager;
-    PositionUpdater position_updater(expanded);
+    PositionUpdater position_updater(default_size);
 
-    Ship s({width/2, height/2}, {0.0, -7.5});
+    Ship s({width/2, height/2}, {0.0, -500.0});
 
     float delta_time = 0.0f;
     Timer t;
@@ -99,6 +93,7 @@ int main()
     bool done = false;
 
     bool shooting = false;
+
     while (!done)
     {
         t.start();
@@ -108,13 +103,6 @@ int main()
         {
             switch (event.type)
             {
-                case SDL_MOUSEBUTTONUP:
-                {
-                    float x = event.button.x;
-                    float y = event.button.y;
-                    s.ship.set_position({x, y});
-                    break;
-                }
                 case SDL_KEYDOWN:
                 {
                     if (event.key.keysym.sym == SDLK_UP)
@@ -133,6 +121,14 @@ int main()
                     {
                         // TODO move this to the ship possibly
                         shooting = true;
+                    }
+                    else if (event.key.keysym.sym == SDLK_o)
+                    {
+                        frames_per_second -= 1;
+                    }
+                    else if (event.key.keysym.sym == SDLK_p)
+                    {
+                        frames_per_second += 1;
                     }
                     break;
                 }
@@ -187,12 +183,18 @@ int main()
             }
         }
         
-        for (auto const& a : asteroid_manager.asteroids())
+        // TODO Implement death 
+        if (!s.invulnerable())
         {
-            auto asteroid_rect = a.shape.surrounding_rect();
-            if (s.ship.surrounding_rect().colliding(asteroid_rect))
+            for (auto const& a : asteroid_manager.asteroids())
             {
-                //printf("YOU LOSE\n");
+                auto asteroid_rect = a.shape.surrounding_rect().shrink(5.0f);
+                auto ship_rect = s.surrounding_rect().shrink(5.0f);
+
+                if (ship_rect.colliding(asteroid_rect))
+                {
+                    s.reset({width / 2, height / 2}, {0.0f, -500.0f});
+                }
             }
         }
 
@@ -204,15 +206,9 @@ int main()
         SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
         // Draw
-        s.ship.draw(renderer);
+        s.draw(renderer);
         bullet_manager.draw(renderer);
         asteroid_manager.draw(renderer);
-
-        //SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xFF, 0x00, 0xFF);
-        //auto r = s.ship.surrounding_rect();
-        //SDL_Rect ship_rect{r.top_left.x, r.top_left.y, r.size.width, r.size.height};
-
-        //SDL_RenderDrawRect(sdl_renderer, &ship_rect);
 
         SDL_RenderPresent(sdl_renderer);
 

@@ -24,26 +24,25 @@
  */
 
 #include "ship.h"
-
-#include <iostream>
+#include "default_ship_shape.h"
 
 namespace
 {
-int const size = 50;
-float const friction = 0.75f;
+int const size{50};
+float const friction{0.75f};
+float const default_invulnerable_time{2.0f};
+
+// FIXME This should be part of an animation thing or something?
+float const blink_speed(0.05f);
+float const blink_speed_invulnerable(0.1f);
 }
 
 Ship::Ship(Vector const& position, Vector const& acceleration) :
-    ship({position,
-         {position.x - size / 4, position.y + size},
-         {position.x - size / 4, position.y + size},
-         {position.x + size / 4, position.y + size}
-         //{position.x + 20, position.y + 20},
-         //{position.x + 20, position.y}}
-    }),
     acceleration(acceleration),
-    position(position)
+    ship(default_ship),
+    ship_moving(default_ship_moving)
 {
+    reset(position, acceleration);
 }
 
 void Ship::update(float delta)
@@ -54,12 +53,14 @@ void Ship::update(float delta)
         {
             acceleration.rotate(-360 * delta);
             ship.rotate(-360 * delta);
+            ship_moving.rotate(-360 * delta);
             break;
         }
         case TurnDirection::right:
         {
             acceleration.rotate(360 * delta);
             ship.rotate(360 * delta);
+            ship_moving.rotate(360 * delta);
             break;
         }
         default:
@@ -72,16 +73,60 @@ void Ship::update(float delta)
     }
     else
     {
-        velocity += (-velocity * (friction * delta));
+        velocity += -velocity * (friction * delta);
     }
 
-    ship.move(velocity);
-    position = ship.first_position();
+    if (invulnerable_time >= 0.0f)
+    {
+        invulnerable_time -= delta;
+    }
+
+    if (invulnerable() || thruster_on)
+    {
+        blink_timer -= delta;
+        if (blink_timer <= 0.0f)
+        {
+            should_blink = !should_blink;
+            if (invulnerable())
+            {
+                blink_timer = blink_speed_invulnerable;
+            }
+            else
+            {
+                blink_timer = blink_speed;
+            }
+        }
+    }
+
+    ship.move(velocity * delta);
+    ship_moving.move(velocity * delta);
 }
 
 void Ship::update_position(PositionUpdater const& position_updater)
 {
-    position_updater.update_vector_lines(ship);
+    if (position_updater.update_vector_lines(ship))
+    {
+        ship_moving.set_position(ship.first_position());
+    }
+}
+
+void Ship::draw(SDLRenderer const& renderer) const
+{
+    if (!invulnerable() || !should_blink)
+    {
+        // TODO Make a blinker class
+        if (thruster_on)// && should_blink)
+        {
+            ship_moving.draw(renderer);
+            //renderer.draw(ship_moving.surrounding_rect());
+        }
+        else
+        {
+            ship.draw(renderer);
+        }
+
+        renderer.draw(ship.surrounding_rect().shrink(5.0f));
+    }
 }
 
 void Ship::start_turning(TurnDirection dir)
@@ -104,12 +149,38 @@ void Ship::stop_thruster()
     thruster_on = false;
 }
 
+void Ship::reset(Vector const& pos, Vector const& accel)
+{
+    invulnerable_time = default_invulnerable_time;
+
+    ship = VectorLines(default_ship);
+    ship.scale(5.0f);
+    ship.set_position(pos);
+
+    ship_moving = VectorLines(default_ship_moving);
+    ship_moving.scale(5.0f);
+    ship_moving.set_position(pos);
+
+    velocity = 0.0f;
+    acceleration = accel;
+}
+
+bool Ship::invulnerable() const
+{
+    return invulnerable_time > 0.0f;
+}
+
 Vector Ship::pos() const
 {
-    return position;
+    return ship.first_position();
 }
 
 Vector Ship::accel() const
 {
     return acceleration;
+}
+
+Rectangle Ship::surrounding_rect() const
+{
+    return ship.surrounding_rect();
 }

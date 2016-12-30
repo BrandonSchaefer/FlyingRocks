@@ -70,8 +70,9 @@ void VectorLines::move(Vector const& direction)
 void VectorLines::rotate(float angle)
 {
     auto bounding_rect = surrounding_rect();
-    Vector middle = {static_cast<float>(bounding_rect.top_left.x + bounding_rect.size.width / 2),
-                     static_cast<float>(bounding_rect.top_left.y + bounding_rect.size.height / 2)};
+    float x = bounding_rect.top_left.x + bounding_rect.size.width / 2;
+    float y = bounding_rect.top_left.y + bounding_rect.size.height / 2;
+    Vector middle{x, y};
 
     for (size_t i = 0; i < vector_points.size(); i++)
     {
@@ -79,12 +80,6 @@ void VectorLines::rotate(float angle)
     }
 
     update_directions_from_positions();
-
-    auto t = vector_points;
-    vector_points.clear();
-
-    for (auto const& m : t)
-        add_point(m.position);
 }
 
 void VectorLines::set_position(Vector const& position)
@@ -92,7 +87,6 @@ void VectorLines::set_position(Vector const& position)
     if (!vector_points.empty())
     {
         vector_points[0].position = position;
-
         update_positions_from_direction();
     }
 }
@@ -148,6 +142,41 @@ Rectangle VectorLines::surrounding_rect() const
             {highest_x - lowest_x, highest_y - lowest_y}};
 }
 
+/*
+Vector VectorLines::middle() const
+{
+    float lowest_x  = std::numeric_limits<float>::max();
+    float highest_x = 0;
+    float lowest_y  = std::numeric_limits<float>::max();
+    float highest_y = 0;
+
+    for (auto const& p : vector_points)
+    {
+        if (p.position.x < lowest_x)
+        {
+            lowest_x = p.position.x;
+        }
+        if (p.position.x > highest_x)
+        {
+            highest_x = p.position.x;
+        }
+        if (p.position.y < lowest_y)
+        {
+            lowest_y = p.position.y;
+        }
+        if (p.position.y > highest_y)
+        {
+            highest_y = p.position.y;
+        }
+    }
+
+    auto width  = highest_x - lowest_x;
+    auto height = highest_y - lowest_y;
+
+    return {lowest_x + width / 2, lowest_y + height / 2};
+}
+*/
+
 void VectorLines::update_positions_from_direction()
 {
     for (size_t i = 1; i < vector_points.size(); i++)
@@ -177,6 +206,17 @@ Vector VectorLines::first_position() const
     }
 
     return vector_points[0].position;
+}
+
+std::vector<Vector> VectorLines::positions() const
+{
+    std::vector<Vector> vp_positions;
+    for (auto const& p: vector_points)
+    {
+        vp_positions.push_back(p.position);
+    }
+
+    return vp_positions;
 }
 
 void VectorLines::draw(SDLRenderer const& renderer) const
