@@ -1,7 +1,7 @@
 //-*- Mode: C++; indent-tabs-mode: nil; tab-width: 4 -*-
 /* The MIT License (MIT)
  *
- * Copyright (c) 2016 Brandon Schaefer
+ * Copyright (c) 2017 Brandon Schaefer
  *                    brandontschaefer@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -23,19 +23,36 @@
  * SOFTWARE.
  */
 
-#ifndef FLYING_ROCK_ASTEROID_H_
-#define FLYING_ROCK_ASTEROID_H_
+#include "sdl_texture.h"
 
-#include "geometry.h"
-#include "vector.h"
-#include "vector_lines.h"
-
-struct Asteroid
+void SDLTexture::create_texture_from_surface(SDLRenderer* renderer, SDL_Surface* surface)
 {
-    VectorLines shape;
-    Vector direction;
-    int32_t number_of_splits;
-    int32_t score;
-};
+    SDL_DestroyTexture(texture);
 
-#endif /* FLYING_ROCK_ASTEROID_H_ */
+    texture = SDL_CreateTextureFromSurface(renderer->renderer(), surface);
+
+    if (texture == nullptr)
+    {
+        throw std::runtime_error("Failed to create texture from surface");
+    }
+
+    size.width  = surface->w;
+    size.height = surface->h;
+}
+
+SDLTexture::~SDLTexture()
+{
+    SDL_DestroyTexture(texture);
+}
+
+void SDLTexture::set_position(Point const& pos)
+{
+    top_left = pos;
+}
+
+void SDLTexture::draw(SDLRenderer const& renderer) const
+{
+    SDL_Rect rect{top_left.x, top_left.y, size.width, size.height};
+
+    SDL_RenderCopy(renderer.renderer(), texture, nullptr, &rect);
+}

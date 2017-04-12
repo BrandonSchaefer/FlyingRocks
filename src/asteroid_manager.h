@@ -34,10 +34,14 @@
 #include <list>
 #include <random>
 
+class ScoreObserver;
+
 class AsteroidMananger
 {
 public:
     explicit AsteroidMananger(Rectangle const& screen_size, int32_t starting_number = 5);
+
+    void set_score_observer(ScoreObserver* observer);
 
     std::list<Asteroid> asteroids() const;
 
@@ -52,6 +56,8 @@ private:
 
     int32_t starting_number;
     std::list<Asteroid> asteroids_;
+
+    ScoreObserver* score_observer{nullptr};
 
     std::uniform_int_distribution<int32_t> random_x;
     std::uniform_int_distribution<int32_t> random_y;

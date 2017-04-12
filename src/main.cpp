@@ -30,6 +30,8 @@
 #include "asteroid_manager.h"
 #include "bullet_manager.h"
 #include "position_updater.h"
+#include "score.h"
+#include "score_observer.h"
 #include "vector_lines.h"
 #include "timer.h"
 #include "ship.h"
@@ -81,6 +83,10 @@ int main(int argc, char* argv[])
     AsteroidMananger asteroid_manager(default_size);
     BulletManager bullet_manager;
     PositionUpdater position_updater(default_size);
+    ScoreObserver score_observer;
+    Score score(&score_observer, &renderer);
+
+    asteroid_manager.set_score_observer(&score_observer);
 
     Ship s({width/2, height/2}, {0.0, -500.0});
 
@@ -209,6 +215,7 @@ int main(int argc, char* argv[])
         s.draw(renderer);
         bullet_manager.draw(renderer);
         asteroid_manager.draw(renderer);
+        score.draw(renderer);
 
         SDL_RenderPresent(sdl_renderer);
 

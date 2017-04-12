@@ -4,7 +4,7 @@ Animation:
 
 Score:
     - Need to draw the score and keep track of it
-    - Large = 30, Medium = 40, Small = 100
+    - Large = 25, Medium = 50, Small = 100
 
 Lifes:
     - Need to add lifes, keep track of it and handle the logic
@@ -30,7 +30,3 @@ Scale:
 Collision:
     - Need to do better here, generating a rectangle for a complex vector line
       gives poor collision boxes
-
-Warping:
-    - Need to handle warping better. When an object is out of bounds we need to
-      warp it to the edge of the bounds vs warping in bounds.

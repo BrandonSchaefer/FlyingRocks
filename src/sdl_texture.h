@@ -1,7 +1,7 @@
 //-*- Mode: C++; indent-tabs-mode: nil; tab-width: 4 -*-
 /* The MIT License (MIT)
  *
- * Copyright (c) 2016 Brandon Schaefer
+ * Copyright (c) 2017 Brandon Schaefer
  *                    brandontschaefer@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -23,19 +23,26 @@
  * SOFTWARE.
  */
 
-#ifndef FLYING_ROCK_ASTEROID_H_
-#define FLYING_ROCK_ASTEROID_H_
-
 #include "geometry.h"
-#include "vector.h"
-#include "vector_lines.h"
+#include "sdl_renderer.h"
 
-struct Asteroid
+#include <SDL2/SDL.h>
+
+// TODO Expand this as needed
+class SDLTexture
 {
-    VectorLines shape;
-    Vector direction;
-    int32_t number_of_splits;
-    int32_t score;
-};
+public:
+    ~SDLTexture();
 
-#endif /* FLYING_ROCK_ASTEROID_H_ */
+    void create_texture_from_surface(SDLRenderer* renderer, SDL_Surface* surface);
+
+    void set_position(Point const& pos);
+
+    void draw(SDLRenderer const& renderer) const;
+
+private:
+    Point top_left{0, 0};
+    Size size{0, 0};
+
+    SDL_Texture* texture{nullptr};
+};

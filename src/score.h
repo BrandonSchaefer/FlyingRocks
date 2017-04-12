@@ -1,7 +1,7 @@
 //-*- Mode: C++; indent-tabs-mode: nil; tab-width: 4 -*-
 /* The MIT License (MIT)
  *
- * Copyright (c) 2016 Brandon Schaefer
+ * Copyright (c) 2017 Brandon Schaefer
  *                    brandontschaefer@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -23,19 +23,30 @@
  * SOFTWARE.
  */
 
-#ifndef FLYING_ROCK_ASTEROID_H_
-#define FLYING_ROCK_ASTEROID_H_
+#include <memory>
+#include <SDL2/SDL_ttf.h>
 
-#include "geometry.h"
-#include "vector.h"
-#include "vector_lines.h"
+#include "sdl_renderer.h"
+#include "sdl_texture.h"
 
-struct Asteroid
+class ScoreObserver;
+
+class Score
 {
-    VectorLines shape;
-    Vector direction;
-    int32_t number_of_splits;
-    int32_t score;
-};
+public:
+    Score(ScoreObserver* observer, SDLRenderer* renderer);
 
-#endif /* FLYING_ROCK_ASTEROID_H_ */
+    void add_score(uint32_t amount);
+
+    void draw(SDLRenderer const& renderer);
+
+private:
+    void create_score_texture();
+
+    std::unique_ptr<ScoreObserver> observer;
+    uint32_t total_score{0};
+
+    TTF_Font* font{nullptr};
+    SDLTexture score_texture;
+    SDLRenderer* renderer{nullptr};
+};

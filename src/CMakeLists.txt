@@ -14,9 +14,12 @@ set (FLYING_ROCK_LOADER_SRC
     bullet_manager.cpp
     geometry.cpp
     position_updater.cpp
+    score.cpp
+    score_observer.cpp
     sdl_backend.cpp
     sdl_error.cpp
     sdl_renderer.cpp
+    sdl_texture.cpp
     ship.cpp
     random_generator.cpp
     timer.cpp
@@ -33,9 +36,12 @@ set (FLYING_ROCK_LOADER_HDR
     default_asteroid_shapes.h
     default_ship_shape.h
     position_updater.h
+    score.h
+    score_observer.h
     sdl_backend.h
     sdl_error.h
     sdl_renderer.h
+    sdl_texture.h
     ship.h
     random_generator.h
     timer.h

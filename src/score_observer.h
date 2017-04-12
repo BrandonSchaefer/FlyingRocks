@@ -1,7 +1,7 @@
 //-*- Mode: C++; indent-tabs-mode: nil; tab-width: 4 -*-
 /* The MIT License (MIT)
  *
- * Copyright (c) 2016 Brandon Schaefer
+ * Copyright (c) 2017 Brandon Schaefer
  *                    brandontschaefer@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -23,19 +23,18 @@
  * SOFTWARE.
  */
 
-#ifndef FLYING_ROCK_ASTEROID_H_
-#define FLYING_ROCK_ASTEROID_H_
+#include <cstdint>
+#include <vector>
 
-#include "geometry.h"
-#include "vector.h"
-#include "vector_lines.h"
-
-struct Asteroid
+class ScoreObserver
 {
-    VectorLines shape;
-    Vector direction;
-    int32_t number_of_splits;
-    int32_t score;
-};
+public:
+    virtual void add_score(uint32_t amount) const;
 
-#endif /* FLYING_ROCK_ASTEROID_H_ */
+    // TODO Move to std::weak_ptr
+    void add_observer(ScoreObserver* observer);
+    void remove_observer(ScoreObserver* observer);
+
+private:
+    std::vector<ScoreObserver*> observer_list;
+};

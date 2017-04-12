@@ -26,6 +26,7 @@
 #include "asteroid_manager.h"
 #include "default_asteroid_shapes.h"
 #include "random_generator.h"
+#include "score_observer.h"
 
 #include <cstdlib>
 #include <functional>
@@ -39,6 +40,7 @@ std::vector<VectorLines> const asteroid_shapes{
 };
 
 int32_t const default_number_of_splits{3};
+int32_t const starting_score{25};
 
 // FIXME Need better ranges, can have a 0,0 speed
 std::uniform_real_distribution<float>  random_speed{-100.0f, 100.0f};
@@ -52,6 +54,11 @@ AsteroidMananger::AsteroidMananger(Rectangle const& screen_size, int32_t startin
     random_y(0, screen_size.size.height)
 {
     populate();
+}
+
+void AsteroidMananger::set_score_observer(ScoreObserver* observer)
+{
+    score_observer = observer;
 }
 
 void AsteroidMananger::populate()
@@ -69,7 +76,8 @@ void AsteroidMananger::populate()
 
         asteroids_.push_back({new_basic,
                              {random_speed(mt()), random_speed(mt())},
-                             default_number_of_splits});
+                             default_number_of_splits,
+                             starting_score});
     }
 }
 
@@ -124,6 +132,12 @@ bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
             // Create 2 new asteroids with a different shape then parent and different speeds
             Asteroid new_asteroid = *it;
             new_asteroid.number_of_splits--;
+            new_asteroid.score *= 2;
+
+            if (score_observer)
+            {
+                score_observer->add_score(it->score);
+            }
 
             if (new_asteroid.number_of_splits > 0)
             {
@@ -135,6 +149,7 @@ bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
 
                 new_asteroid.direction = {random_speed(mt()) + 1.0f, random_speed(mt()) + 1.0f};
                 asteroids_.push_back(new_asteroid);
+
             }
 
             asteroids_.erase(it);
