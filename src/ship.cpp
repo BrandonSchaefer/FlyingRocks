@@ -125,7 +125,7 @@ void Ship::draw(SDLRenderer const& renderer) const
             ship.draw(renderer);
         }
 
-        renderer.draw(ship.surrounding_rect().shrink(5.0f));
+        //renderer.draw(ship.surrounding_rect().shrink(5.0f));
     }
 }
 

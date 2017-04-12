@@ -46,30 +46,66 @@ PositionUpdater::PositionUpdater(Rectangle const& world_size) :
 {
 }
 
-// If all points are off screen update the main point and update the rest
-// FIXME Need to fix the set position based on the edge of map and set the closet point to it
-bool PositionUpdater::update_vector_lines(VectorLines& lines) const
+bool PositionUpdater::vector_lines_offscreen(VectorLines& lines) const
 {
     auto width  = world.size.width;
     auto height = world.size.height;
-
-    bool all_offscreen = true;
 
     for (auto const& p : lines.positions())
     {
         if (p.x >= 0 && p.x < width &&
             p.y >= 0 && p.y < height)
         {
-            all_offscreen = false;
+            return false;
         }
     }
 
-    // Need to find point that is closet to the bound
-    if (all_offscreen)
+    return true;
+}
+
+bool PositionUpdater::update_vector_lines(VectorLines& lines) const
+{
+    auto width  = world.size.width;
+    auto height = world.size.height;
+
+    bool offscreen = vector_lines_offscreen(lines);
+
+    if (offscreen)
     {
         auto main_point = lines.first_position();
+
         auto new_x = static_cast<float>(mod(floor(main_point.x), width));
         auto new_y = static_cast<float>(mod(floor(main_point.y), height));
+
+        for (auto const& p : lines.positions())
+        {
+            // Left
+            if (p.x < 0)
+            {
+                new_x = width + main_point.x + lines.surrounding_rect().size.width;
+                break;
+            }
+            // Right
+            else if (p.x > width)
+            {
+                new_x -= lines.surrounding_rect().size.width;
+                break;
+            }
+
+            // Top
+            if (p.y < 0)
+            {
+                new_y = height + main_point.y + lines.surrounding_rect().size.height;
+                break;
+            }
+            // Down
+            else if (p.y > height)
+            {
+                new_y -= lines.surrounding_rect().size.height;
+                break;
+            }
+        }
+
         lines.set_position({new_x, new_y});
 
         return true;

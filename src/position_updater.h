@@ -33,6 +33,8 @@ class PositionUpdater
 public:
     PositionUpdater(Rectangle const& world_size);
 
+    bool vector_lines_offscreen(VectorLines& lines) const;
+
     bool update_vector_lines(VectorLines& lines) const;
     bool update_vector(Vector& position) const;
 
