@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
             for (auto const& a : asteroid_manager.asteroids())
             {
                 auto asteroid_rect = a.shape.surrounding_rect().shrink(5.0f);
-                auto ship_rect = s.surrounding_rect().shrink(5.0f);
+                auto ship_rect     = s.surrounding_rect().shrink(5.0f);
 
                 if (ship_rect.colliding(asteroid_rect))
                 {
