@@ -23,6 +23,9 @@
  * SOFTWARE.
  */
 
+#ifndef FLYING_ROCK_SCORE_OBSERVER_H_
+#define FLYING_ROCK_SCORE_OBSERVER_H_
+
 #include <cstdint>
 #include <vector>
 
@@ -38,3 +41,5 @@ public:
 private:
     std::vector<ScoreObserver*> observer_list;
 };
+
+#endif /* FLYING_ROCK_SCORE_OBSERVER_H_ */

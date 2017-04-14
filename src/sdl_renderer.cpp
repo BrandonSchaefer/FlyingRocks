@@ -42,7 +42,6 @@ void sdl_renderer_destroy(SDL_Renderer* renderer)
 }
 
 SDLRenderer::SDLRenderer(std::string const& title, Size const& window_size) :
-    window_size(window_size),
     window_(nullptr, sdl_window_destroy),
     renderer_(nullptr, sdl_renderer_destroy)
 {
@@ -119,4 +118,13 @@ SDL_Window* SDLRenderer::window() const
 SDL_Renderer* SDLRenderer::renderer() const
 {
     return renderer_.get();
+}
+
+SDLTexture SDLRenderer::create_texture_from_surface(SDL_Surface* surface) const
+{
+    SDLTexture texture(SDL_CreateTextureFromSurface(renderer_.get(), surface));
+
+    texture.set_size({surface->w, surface->h});
+
+    return texture;
 }

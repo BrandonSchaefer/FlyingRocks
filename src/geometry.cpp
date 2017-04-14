@@ -28,20 +28,20 @@
 Rectangle Rectangle::expand(int32_t amount) const
 {
     return {
-        top_left.x - amount,
-        top_left.y - amount,
-        size.width  + amount * 2,
-        size.height + amount * 2
+        {top_left.x - amount,
+         top_left.y - amount},
+        {size.width  + amount * 2,
+         size.height + amount * 2}
     };
 }
 
 Rectangle Rectangle::shrink(int32_t amount) const
 {
     return {
-        top_left.x + amount,
-        top_left.y + amount,
-        size.width  - amount * 2,
-        size.height - amount * 2
+        {top_left.x + amount,
+         top_left.y + amount},
+        {size.width  - amount * 2,
+         size.height - amount * 2}
     };
 }
 

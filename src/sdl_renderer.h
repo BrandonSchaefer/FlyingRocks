@@ -32,9 +32,7 @@
 
 #include "color.h"
 #include "geometry.h"
-
-class SDL_Window;
-class SDL_Renderer;
+#include "sdl_texture.h"
 
 typedef std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>     SDLWindowUPtr;
 typedef std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> SDLRendererUPtr;
@@ -54,13 +52,13 @@ public:
     void draw(Rectangle const& rect) const;
     void draw_solid(Rectangle const& rect) const;
 
+    SDLTexture create_texture_from_surface(SDL_Surface* surface) const;
+
     // TODO Wrap these up in real classes/functions to avoid needing to expose SDL2
     SDL_Window* window() const;
     SDL_Renderer* renderer() const;
 
 private:
-    Size window_size;
-
     SDLWindowUPtr window_;
     SDLRendererUPtr renderer_;
 };

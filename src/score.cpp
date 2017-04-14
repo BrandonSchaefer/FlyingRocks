@@ -25,10 +25,12 @@
 
 #include "score.h"
 #include "score_observer.h"
+#include "sdl_renderer.h"
 
 namespace
 {
 uint32_t const default_font_size{36};
+// TODO Remove hardcoded bits or packages the font with this
 std::string const ttf_path{"/usr/share/fonts/truetype/ubuntu-font-family/UbuntuMono-R.ttf"};
 SDL_Color const default_color{0xFF, 0xFF, 0xFF, 0xFF};
 
@@ -46,43 +48,48 @@ struct AccumulatorScoreObserver : ScoreObserver
 
     Score* score;
 };
+
+void font_deleter(TTF_Font* font)
+{
+    TTF_CloseFont(font);
+}
 }
 
-Score::Score(ScoreObserver* in_observer, SDLRenderer* renderer) :
+Score::Score(ScoreObserver* in_observer, SDLRenderer* renderer, Point const& pos) :
     observer(std::make_unique<AccumulatorScoreObserver>(this)),
-    font(TTF_OpenFont(ttf_path.c_str(), default_font_size)),
-    renderer(renderer)
+    score_position(pos),
+    font(TTF_OpenFont(ttf_path.c_str(), default_font_size), font_deleter),
+    renderer(renderer),
+    score_texture(create_score_texture())
 {
     if (font == nullptr)
     {
         throw std::runtime_error("Failed to load font: " + std::string(TTF_GetError()));
     }
 
-    // FIXME Magic
-    score_texture.set_position({20, 20});
-
     in_observer->add_observer(observer.get());
-    create_score_texture();
 }
 
-void Score::create_score_texture()
+SDLTexture Score::create_score_texture() const
 {
-    auto score_surface = TTF_RenderText_Solid(font, std::to_string(total_score).c_str(), default_color);
+    auto score_surface = TTF_RenderText_Solid(font.get(), std::to_string(total_score).c_str(), default_color);
 
     if (score_surface == nullptr)
     {
         throw std::runtime_error("Failed to render text: " + std::string(TTF_GetError()));
     }
 
-    score_texture.create_texture_from_surface(renderer, score_surface);
+    auto texture = renderer->create_texture_from_surface(score_surface);
+    texture.set_position(score_position);
     SDL_FreeSurface(score_surface);
+
+    return texture;
 }
 
 void Score::add_score(uint32_t amount)
 {
     total_score += amount;
-
-    create_score_texture();
+    score_texture = create_score_texture();
 }
 
 void Score::draw(SDLRenderer const& renderer)

@@ -28,7 +28,6 @@
 
 namespace
 {
-int const size{50};
 float const friction{0.75f};
 float const default_invulnerable_time{2.0f};
 

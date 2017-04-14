@@ -83,8 +83,10 @@ int main(int argc, char* argv[])
     AsteroidMananger asteroid_manager(default_size);
     BulletManager bullet_manager;
     PositionUpdater position_updater(default_size);
+
     ScoreObserver score_observer;
-    Score score(&score_observer, &renderer);
+    // Magic starting pos
+    Score score(&score_observer, &renderer, {20, 20});
 
     asteroid_manager.set_score_observer(&score_observer);
 

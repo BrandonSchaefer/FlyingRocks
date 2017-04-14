@@ -23,30 +23,36 @@
  * SOFTWARE.
  */
 
+#ifndef FLYING_ROCK_SCORE_H_
+#define FLYING_ROCK_SCORE_H_
+
 #include <memory>
 #include <SDL2/SDL_ttf.h>
 
-#include "sdl_renderer.h"
 #include "sdl_texture.h"
 
 class ScoreObserver;
+class SDLRenderer;
 
 class Score
 {
 public:
-    Score(ScoreObserver* observer, SDLRenderer* renderer);
+    Score(ScoreObserver* observer, SDLRenderer* renderer, Point const& point);
 
     void add_score(uint32_t amount);
 
     void draw(SDLRenderer const& renderer);
 
 private:
-    void create_score_texture();
+    SDLTexture create_score_texture() const;
 
     std::unique_ptr<ScoreObserver> observer;
     uint32_t total_score{0};
+    Point score_position;
 
-    TTF_Font* font{nullptr};
-    SDLTexture score_texture;
+    std::shared_ptr<TTF_Font> font{nullptr};
     SDLRenderer* renderer{nullptr};
+    SDLTexture score_texture;
 };
+
+#endif /* FLYING_ROCK_SCORE_H_ */

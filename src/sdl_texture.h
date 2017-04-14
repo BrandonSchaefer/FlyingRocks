@@ -23,20 +23,26 @@
  * SOFTWARE.
  */
 
+#ifndef FLYING_ROCK_SDL_TEXTURE_H_
+#define FLYING_ROCK_SDL_TEXTURE_H_
+
 #include "geometry.h"
-#include "sdl_renderer.h"
 
 #include <SDL2/SDL.h>
+
+#include <memory>
+
+class SDLRenderer;
 
 // TODO Expand this as needed
 class SDLTexture
 {
 public:
-    ~SDLTexture();
-
-    void create_texture_from_surface(SDLRenderer* renderer, SDL_Surface* surface);
+    // Takes ownership of the pointer
+    SDLTexture(SDL_Texture* texture);
 
     void set_position(Point const& pos);
+    void set_size(Size const& size);
 
     void draw(SDLRenderer const& renderer) const;
 
@@ -44,5 +50,7 @@ private:
     Point top_left{0, 0};
     Size size{0, 0};
 
-    SDL_Texture* texture{nullptr};
+    std::shared_ptr<SDL_Texture> texture{nullptr};
 };
+
+#endif /* FLYING_ROCK_SDL_TEXTURE_H_ */

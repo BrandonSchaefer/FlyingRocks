@@ -121,9 +121,9 @@ void AsteroidMananger::draw(SDLRenderer const& renderer) const
 bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
 {
 
-    Rectangle bullet_rect{static_cast<int32_t>(bullet.position.x),
-                          static_cast<int32_t>(bullet.position.y),
-                          bullet.size.width, bullet.size.height};
+    Rectangle bullet_rect{{static_cast<int32_t>(bullet.position.x),
+                           static_cast<int32_t>(bullet.position.y)},
+                          {bullet.size.width, bullet.size.height}};
 
     for (auto it = asteroids_.begin(); it != asteroids_.end(); ++it)
     {

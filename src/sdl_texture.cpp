@@ -24,25 +24,23 @@
  */
 
 #include "sdl_texture.h"
+#include "sdl_renderer.h"
 
-void SDLTexture::create_texture_from_surface(SDLRenderer* renderer, SDL_Surface* surface)
+namespace
+{
+void sdl_texture_deleter(SDL_Texture* texture)
 {
     SDL_DestroyTexture(texture);
-
-    texture = SDL_CreateTextureFromSurface(renderer->renderer(), surface);
-
-    if (texture == nullptr)
-    {
-        throw std::runtime_error("Failed to create texture from surface");
-    }
-
-    size.width  = surface->w;
-    size.height = surface->h;
+}
 }
 
-SDLTexture::~SDLTexture()
+SDLTexture::SDLTexture(SDL_Texture* texture) :
+    texture{std::shared_ptr<SDL_Texture>(texture, sdl_texture_deleter)}
 {
-    SDL_DestroyTexture(texture);
+    if (texture == nullptr)
+    {
+        throw std::runtime_error("Failed to create texture");
+    }
 }
 
 void SDLTexture::set_position(Point const& pos)
@@ -50,9 +48,14 @@ void SDLTexture::set_position(Point const& pos)
     top_left = pos;
 }
 
+void SDLTexture::set_size(Size const& in_size)
+{
+    size = in_size;
+}
+
 void SDLTexture::draw(SDLRenderer const& renderer) const
 {
     SDL_Rect rect{top_left.x, top_left.y, size.width, size.height};
 
-    SDL_RenderCopy(renderer.renderer(), texture, nullptr, &rect);
+    SDL_RenderCopy(renderer.renderer(), texture.get(), nullptr, &rect);
 }
