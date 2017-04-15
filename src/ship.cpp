@@ -179,7 +179,8 @@ Vector Ship::accel() const
     return acceleration;
 }
 
-Rectangle Ship::surrounding_rect() const
+// Never return the ship_moving as we dont want the thurster to be part of the hit box
+VectorLines Ship::ship_shape() const
 {
-    return ship.surrounding_rect();
+    return ship;
 }

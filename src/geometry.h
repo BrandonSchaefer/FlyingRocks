@@ -45,7 +45,8 @@ struct Rectangle
     Rectangle expand(int32_t amount) const;
     Rectangle shrink(int32_t amount) const;
 
-    bool colliding(Rectangle const& r);
+    bool colliding(Rectangle const& r) const;
+    bool colliding(Point const& pos) const;
 
     Point top_left;
     Size size;

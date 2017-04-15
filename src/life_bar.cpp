@@ -26,13 +26,19 @@
 #include "life_bar.h"
 #include "default_ship_shape.h"
 
+namespace
+{
+float const spacing{5.0f};
+}
+
 LifeBar::LifeBar(int starting_lifes)
 {
     for (int i = 0; i < starting_lifes; i++)
     {
         lifes.push_back(default_ship);
         lifes[i].scale(2.5f);
-        lifes[i].set_position({i * (lifes[i].surrounding_rect().size.width + 5.0f) + 20.0f, 60.0f});
+        // TODO Fix the hardcoded bits. Need to get the height from the score
+        lifes[i].set_position({i * (lifes[i].surrounding_rect().size.width + spacing) + 30.0f, 60.0f});
     }
 }
 

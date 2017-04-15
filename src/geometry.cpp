@@ -45,10 +45,16 @@ Rectangle Rectangle::shrink(int32_t amount) const
     };
 }
 
-bool Rectangle::colliding(Rectangle const& r)
+bool Rectangle::colliding(Rectangle const& r) const
 {
     return !(r.top_left.x > top_left.x + size.width ||
              r.top_left.x + r.size.width < top_left.x ||
              r.top_left.y > top_left.y + size.height ||
              r.top_left.y + r.size.height < top_left.y);
+}
+
+
+bool Rectangle::colliding(Point const& pos) const
+{
+    return colliding({pos, {1,1}});
 }

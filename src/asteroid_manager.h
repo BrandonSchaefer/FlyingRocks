@@ -28,6 +28,7 @@
 
 #include "asteroid.h"
 #include "bullet.h"
+#include "geometry.h"
 #include "position_updater.h"
 #include "sdl_renderer.h"
 
@@ -36,6 +37,11 @@
 
 class ScoreObserver;
 
+/*
+TODO Need a way to:
+     avoid spawning on the player
+     when hit a player remove an asteroid
+*/
 class AsteroidMananger
 {
 public:
@@ -43,16 +49,21 @@ public:
 
     void set_score_observer(ScoreObserver* observer);
 
-    std::list<Asteroid> asteroids() const;
+    std::list<Asteroid>::iterator begin();
+    std::list<Asteroid>::iterator end();
+
+    std::list<Asteroid>::const_iterator cbegin() const;
+    std::list<Asteroid>::const_iterator cend() const;
+
+    std::list<Asteroid>::iterator remove_asteroid(std::list<Asteroid>::iterator const& it, Point const& avoid_center);
 
     void update(float delta);
     void update_position(PositionUpdater const& position_updater);
     void draw(SDLRenderer const& renderer) const;
 
-    bool bullet_colliding(Bullet const& bullet);
-
 private:
-    void populate();
+    void populate(Rectangle const& avoid_region);
+    void respawn_asteroid(Asteroid const& asteroid_removed);
 
     int32_t starting_number;
     std::list<Asteroid> asteroids_;

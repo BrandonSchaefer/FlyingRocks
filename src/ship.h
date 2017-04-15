@@ -62,7 +62,7 @@ public:
     Vector pos() const;
     Vector accel() const;
 
-    Rectangle surrounding_rect() const;
+    VectorLines ship_shape() const;
 
 private:
     Vector acceleration;

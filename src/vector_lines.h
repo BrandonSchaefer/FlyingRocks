@@ -55,6 +55,8 @@ public:
     Vector first_position() const;
     std::vector<Vector> positions() const;
 
+    bool colliding(VectorLines const& other) const;
+
     // TODO This should be part of a different class maybe?
     void draw(SDLRenderer const& renderer) const;
 

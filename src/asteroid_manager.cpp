@@ -41,6 +41,7 @@ std::vector<VectorLines> const asteroid_shapes{
 
 int32_t const default_number_of_splits{3};
 int32_t const starting_score{25};
+int32_t const default_avoid_expand{150};
 
 // FIXME Need better ranges, can have a 0,0 speed
 std::uniform_real_distribution<float>  random_speed{-100.0f, 100.0f};
@@ -53,7 +54,8 @@ AsteroidMananger::AsteroidMananger(Rectangle const& screen_size, int32_t startin
     random_x(0, screen_size.size.width),
     random_y(0, screen_size.size.height)
 {
-    populate();
+    Rectangle center_avoid_region{{screen_size.size.width / 2, screen_size.size.height / 2}, {1, 1}};
+    populate(center_avoid_region.expand(default_avoid_expand));
 }
 
 void AsteroidMananger::set_score_observer(ScoreObserver* observer)
@@ -61,17 +63,28 @@ void AsteroidMananger::set_score_observer(ScoreObserver* observer)
     score_observer = observer;
 }
 
-void AsteroidMananger::populate()
+void AsteroidMananger::populate(Rectangle const& avoid_region)
 {
+    printf("%i %i %i %i\n", avoid_region.top_left.x, avoid_region.top_left.y, avoid_region.size.width, avoid_region.size.height);
     for (int32_t i = 0; i < starting_number; i++)
     {
         auto new_basic = asteroid_shapes[random_asteroid(mt())];
         new_basic.scale(20.0f);
 
-        auto new_x = static_cast<float>(random_x(mt()));
-        auto new_y = static_cast<float>(random_y(mt()));
+        auto new_x = random_x(mt());
+        auto new_y = random_y(mt());
 
-        new_basic.set_position({new_x, new_y});
+        printf("Wtttf\n");
+
+        // TODO Random-ize this
+        if (avoid_region.colliding(Point{new_x, new_y}))
+        {
+            printf("AVOID\n");
+            new_x += 100;
+            new_y += 100;
+        }
+
+        new_basic.set_position({static_cast<float>(new_x), static_cast<float>(new_y)});
         new_basic.rotate(random_rotation(mt()));
 
         asteroids_.push_back({new_basic,
@@ -81,9 +94,64 @@ void AsteroidMananger::populate()
     }
 }
 
-std::list<Asteroid> AsteroidMananger::asteroids() const
+std::list<Asteroid>::iterator AsteroidMananger::begin()
 {
-    return asteroids_;
+    return asteroids_.begin();
+}
+
+std::list<Asteroid>::iterator AsteroidMananger::end()
+{
+    return asteroids_.end();
+}
+
+std::list<Asteroid>::const_iterator AsteroidMananger::cbegin() const
+{
+    return asteroids_.cbegin();
+}
+
+std::list<Asteroid>::const_iterator AsteroidMananger::cend() const
+{
+    return asteroids_.cend();
+}
+
+std::list<Asteroid>::iterator AsteroidMananger::remove_asteroid(std::list<Asteroid>::iterator const& it, Point const& avoid_center)
+{
+    respawn_asteroid(*it);
+    auto next_it = asteroids_.erase(it);
+
+    if (asteroids_.empty())
+    {
+        auto avoid_region = Rectangle{avoid_center, {1,1}};
+        populate(avoid_region.expand(default_avoid_expand));
+    }
+
+    return next_it;
+}
+
+void AsteroidMananger::respawn_asteroid(Asteroid const& asteroid_removed)
+{
+    // Create 2 new asteroids with a different shape then parent and different speeds
+    Asteroid new_asteroid = asteroid_removed;
+    new_asteroid.number_of_splits--;
+    new_asteroid.score *= 2;
+
+    if (score_observer)
+    {
+        score_observer->add_score(asteroid_removed.score);
+    }
+
+    if (new_asteroid.number_of_splits > 0)
+    {
+        new_asteroid.shape.scale(0.5f);
+        //new_asteroid.shape = asteroid_shapes[random_asteroid(mt())];
+
+        new_asteroid.direction = {random_speed(mt()) + 1.0f, random_speed(mt()) + 1.0f};
+        asteroids_.push_back(new_asteroid);
+
+        new_asteroid.direction = {random_speed(mt()) + 1.0f, random_speed(mt()) + 1.0f};
+        asteroids_.push_back(new_asteroid);
+
+    }
 }
 
 void AsteroidMananger::update(float delta)
@@ -111,57 +179,5 @@ void AsteroidMananger::draw(SDLRenderer const& renderer) const
     {
         renderer.set_color({0xFF, 0xFF, 0xFF, 0xFF});
         a.shape.draw(renderer);
-
-        //renderer.set_color({0x00, 0xFF, 0xFF, 0xFF});
-        //auto r = a.shape.surrounding_rect().shrink(5.0f);
-        //renderer.draw(r);
     }
-}
-
-bool AsteroidMananger::bullet_colliding(Bullet const& bullet)
-{
-
-    Rectangle bullet_rect{{static_cast<int32_t>(bullet.position.x),
-                           static_cast<int32_t>(bullet.position.y)},
-                          {bullet.size.width, bullet.size.height}};
-
-    for (auto it = asteroids_.begin(); it != asteroids_.end(); ++it)
-    {
-        if (it->shape.surrounding_rect().colliding(bullet_rect))
-        {
-            // Create 2 new asteroids with a different shape then parent and different speeds
-            Asteroid new_asteroid = *it;
-            new_asteroid.number_of_splits--;
-            new_asteroid.score *= 2;
-
-            if (score_observer)
-            {
-                score_observer->add_score(it->score);
-            }
-
-            if (new_asteroid.number_of_splits > 0)
-            {
-                new_asteroid.shape.scale(0.5f);
-                //new_asteroid.shape = asteroid_shapes[random_asteroid(mt())];
-
-                new_asteroid.direction = {random_speed(mt()) + 1.0f, random_speed(mt()) + 1.0f};
-                asteroids_.push_back(new_asteroid);
-
-                new_asteroid.direction = {random_speed(mt()) + 1.0f, random_speed(mt()) + 1.0f};
-                asteroids_.push_back(new_asteroid);
-
-            }
-
-            asteroids_.erase(it);
-
-            if (asteroids_.empty())
-            {
-                populate();
-            }
-
-            return true;
-        }
-    }
-
-    return false;
 }

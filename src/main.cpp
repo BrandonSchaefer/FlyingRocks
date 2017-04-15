@@ -64,6 +64,8 @@ float const one_second{1000.0f};
 // Set viewport to smaller then this to get an unrendered section
 Rectangle const default_size{{0, 0}, {800, 600}};
 
+Vector const default_ship_acceleration{0, -500};
+
 }
 
 int main(int argc, char* argv[])
@@ -93,7 +95,7 @@ int main(int argc, char* argv[])
 
     asteroid_manager.set_score_observer(&score_observer);
 
-    Ship s({width/2, height/2}, {0.0, -500.0});
+    Ship s({width/2, height/2}, default_ship_acceleration);
 
     float delta_time = 0.0f;
     Timer t;
@@ -185,26 +187,42 @@ int main(int argc, char* argv[])
         bullet_manager.update(delta_time);
         asteroid_manager.update(delta_time);
 
-        // TODO The ship should hold onto the *gun*. How could we do collision then?
-        for (auto it = bullet_manager.begin(); it != bullet_manager.end(); ++it)
+        // TODO Move this logic of the ship + asteroid and bullet + asteroid to some other place
+        for (auto b_it = bullet_manager.begin(); b_it != bullet_manager.end(); ++b_it)
         {
-            if (asteroid_manager.bullet_colliding(*it))
+            for (auto a_it = asteroid_manager.begin(); a_it != asteroid_manager.end(); ++a_it)
             {
-                it = bullet_manager.erase(it);
+                auto bullet = *b_it;
+                Rectangle bullet_rect{{static_cast<int32_t>(bullet.position.x),
+                                       static_cast<int32_t>(bullet.position.y)},
+                                      {bullet.size.width, bullet.size.height}};
+
+                // TODO Turn the bullet rect into VectorLines or fix the colliding algorithm
+                if (a_it->shape.surrounding_rect().colliding(bullet_rect))
+                {
+                    auto pos = Point{static_cast<int32_t>(s.pos().x),
+                                     static_cast<int32_t>(s.pos().y)};
+                    asteroid_manager.remove_asteroid(a_it, pos);
+                    b_it = bullet_manager.erase(b_it);
+                    break;
+                }
             }
         }
         
         if (!s.invulnerable())
         {
-            for (auto const& a : asteroid_manager.asteroids())
+            for (auto it = asteroid_manager.begin(); it != asteroid_manager.end(); ++it)
             {
-                auto asteroid_rect = a.shape.surrounding_rect().shrink(5.0f);
-                auto ship_rect     = s.surrounding_rect().shrink(5.0f);
-
-                if (ship_rect.colliding(asteroid_rect))
+                if (it->shape.colliding(s.ship_shape()))
                 {
-                    s.reset({width / 2, height / 2}, {0.0f, -500.0f});
+                    s.reset({width / 2, height / 2}, default_ship_acceleration);
+
+                    auto pos = Point{static_cast<int32_t>(s.pos().x),
+                                     static_cast<int32_t>(s.pos().y)};
+
+                    asteroid_manager.remove_asteroid(it, pos);
                     life_bar.remove_life();
+                    break;
                 }
             }
         }

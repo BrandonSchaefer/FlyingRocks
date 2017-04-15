@@ -219,6 +219,39 @@ std::vector<Vector> VectorLines::positions() const
     return vp_positions;
 }
 
+bool VectorLines::colliding(VectorLines const& other) const
+{
+    for (size_t i = 0; i < vector_points.size(); i++)
+    {
+        auto p = vector_points[i].position;
+        auto r = vector_points[i].direction;
+
+        for (size_t j = 0; j < other.vector_points.size(); j++)
+        {
+            auto q = other.vector_points[j].position;
+            auto s = other.vector_points[j].direction;
+
+            auto cross = Vector{q.x - p.x, q.y - p.y};
+            auto cross_r = cross.x * r.y - cross.y * r.x;
+            auto cross_s = cross.x * s.y - cross.y * s.x;
+            auto rxs = r.x * s.y - r.y * s.x;
+
+            auto rxsr = 1.0f / rxs;
+            auto t = cross_s * rxsr;
+            auto u = cross_r * rxsr;
+
+            auto intersetcting = t >= 0.0f && t <= 1.0f && u >= 0.0f && u <= 1.0f;
+
+            if (intersetcting)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void VectorLines::draw(SDLRenderer const& renderer) const
 {
     std::vector<Point> points;
