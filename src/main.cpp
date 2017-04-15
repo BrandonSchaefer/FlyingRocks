@@ -29,6 +29,7 @@
 
 #include "asteroid_manager.h"
 #include "bullet_manager.h"
+#include "life_bar.h"
 #include "position_updater.h"
 #include "score.h"
 #include "score_observer.h"
@@ -87,6 +88,8 @@ int main(int argc, char* argv[])
     ScoreObserver score_observer;
     // Magic starting pos
     Score score(&score_observer, &renderer, {20, 20});
+
+    LifeBar life_bar;
 
     asteroid_manager.set_score_observer(&score_observer);
 
@@ -191,7 +194,6 @@ int main(int argc, char* argv[])
             }
         }
         
-        // TODO Implement death 
         if (!s.invulnerable())
         {
             for (auto const& a : asteroid_manager.asteroids())
@@ -202,6 +204,7 @@ int main(int argc, char* argv[])
                 if (ship_rect.colliding(asteroid_rect))
                 {
                     s.reset({width / 2, height / 2}, {0.0f, -500.0f});
+                    life_bar.remove_life();
                 }
             }
         }
@@ -218,8 +221,15 @@ int main(int argc, char* argv[])
         bullet_manager.draw(renderer);
         asteroid_manager.draw(renderer);
         score.draw(renderer);
+        life_bar.draw(renderer);
 
         SDL_RenderPresent(sdl_renderer);
+
+        if (life_bar.dead())
+        {
+            std::cout << "Game over ..." << std::endl;
+            life_bar = LifeBar();
+        }
 
         // TODO Clean this FPS into a class or something
         if (t.elapsed().count() < one_second / frames_per_second)

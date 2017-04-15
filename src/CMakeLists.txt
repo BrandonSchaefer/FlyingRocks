@@ -13,6 +13,7 @@ set (FLYING_ROCK_LOADER_SRC
     asteroid_manager.cpp
     bullet_manager.cpp
     geometry.cpp
+    life_bar.cpp
     position_updater.cpp
     score.cpp
     score_observer.cpp
@@ -35,6 +36,7 @@ set (FLYING_ROCK_LOADER_HDR
     color.h
     default_asteroid_shapes.h
     default_ship_shape.h
+    life_bar.h
     position_updater.h
     score.h
     score_observer.h

@@ -1,10 +1,5 @@
 Animation:
     - Need to setup animations for destroyed ship and asteroids
-    - Need a second VectorLine of the ship with flame out of the back with thruster on
-
-Score:
-    - Need to draw the score and keep track of it
-    - Large = 25, Medium = 50, Small = 100
 
 Lifes:
     - Need to add lifes, keep track of it and handle the logic
