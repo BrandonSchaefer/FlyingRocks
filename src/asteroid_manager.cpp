@@ -51,11 +51,11 @@ std::uniform_int_distribution<int32_t> random_asteroid(0, asteroid_shapes.size()
 
 AsteroidMananger::AsteroidMananger(Rectangle const& screen_size, int32_t starting_number) :
     starting_number(starting_number),
+    center{screen_size.size.width / 2, screen_size.size.height / 2},
     random_x(0, screen_size.size.width),
     random_y(0, screen_size.size.height)
 {
-    Rectangle center_avoid_region{{screen_size.size.width / 2, screen_size.size.height / 2}, {1, 1}};
-    populate(center_avoid_region.expand(default_avoid_expand));
+    reset();
 }
 
 void AsteroidMananger::set_score_observer(ScoreObserver* observer)
@@ -88,6 +88,14 @@ void AsteroidMananger::populate(Rectangle const& avoid_region)
                              default_number_of_splits,
                              starting_score});
     }
+}
+
+void AsteroidMananger::reset()
+{
+    asteroids_.clear();
+
+    Rectangle center_avoid_region{center, {1, 1}};
+    populate(center_avoid_region.expand(default_avoid_expand));
 }
 
 std::list<Asteroid>::iterator AsteroidMananger::begin()

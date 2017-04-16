@@ -48,6 +48,11 @@ void BulletManager::create_bullet(Vector const& position, Vector const& directio
     }
 }
 
+void BulletManager::reset()
+{
+    bullets_.clear();
+}
+
 void BulletManager::update(float delta)
 {
     for (auto it = bullets_.begin(); it != bullets_.end(); ++it)

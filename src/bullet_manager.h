@@ -38,6 +38,8 @@ class BulletManager
 public:
     void create_bullet(Vector const& position, Vector const& direction);
 
+    void reset();
+
     void update(float delta);
     void update_position(PositionUpdater const& position_updater);
 

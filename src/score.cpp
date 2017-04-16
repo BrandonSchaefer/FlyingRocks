@@ -63,6 +63,12 @@ void Score::add_score(uint32_t amount)
     score_text.set_text(std::to_string(total_score));
 }
 
+void Score::reset()
+{
+    total_score = 0;
+    score_text.set_text(std::to_string(total_score));
+}
+
 void Score::draw(SDLRenderer const& renderer)
 {
     score_text.draw(renderer);

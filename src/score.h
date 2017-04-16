@@ -40,6 +40,7 @@ public:
     Score(ScoreObserver* observer, SDLRenderer* renderer, Point const& point);
 
     void add_score(uint32_t amount);
+    void reset();
 
     void draw(SDLRenderer const& renderer);
 

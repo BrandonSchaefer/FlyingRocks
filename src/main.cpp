@@ -69,15 +69,19 @@ Vector const default_ship_acceleration{0, -500};
 
 uint32_t const fps_font_size{36};
 SDL_Color const fps_font_color{0x00, 0xFF, 0x00, 0xFF};
+
+uint32_t const menu_font_size{36};
+SDL_Color const menu_font_color{0xFF, 0xFF, 0xFF, 0xFF};
 }
 
+// TODO Clean this up man ... so ugly
 int main(int argc, char* argv[])
 {
     // FIXME move to a real random generator
     srand(time(nullptr));
 
     // TODO get fps from command line
-    float frames_per_second = default_fps;
+    auto frames_per_second = default_fps;
 
     SDLBackend backend;
     SDLRenderer renderer("Flying Rocks", default_size.size);
@@ -101,7 +105,17 @@ int main(int argc, char* argv[])
     Ship s({width/2, height/2}, default_ship_acceleration);
 
     Text fps_counter(&renderer, fps_font_color, fps_font_size);
-    fps_counter.set_text(std::to_string(default_fps));
+    fps_counter.set_text(std::to_string(static_cast<int32_t>(default_fps)));
+
+    Text game_over(&renderer, menu_font_color, menu_font_size);
+    game_over.set_text("GAME OVER!");
+    game_over.set_position({static_cast<int32_t>(width)  / 2 - game_over.text_size().width / 2,
+                            static_cast<int32_t>(height) / 2 - game_over.text_size().height / 2});
+
+    Text restart(&renderer, menu_font_color, menu_font_size);
+    restart.set_text("Press Enter To Restart");
+    restart.set_position({static_cast<int32_t>(width)  / 2 - restart.text_size().width / 2,
+                          static_cast<int32_t>(height) / 2 + game_over.text_size().height * 4});
 
     // FIXME Bah hard coded - ish (mainly the spacing)
     fps_counter.set_position({static_cast<int32_t>(width) - fps_counter.text_size().width - 20, 20});
@@ -116,6 +130,7 @@ int main(int argc, char* argv[])
     bool fps_enabled = true;
 
     bool shooting = false;
+    bool paused = false;
 
     while (!done)
     {
@@ -128,6 +143,16 @@ int main(int argc, char* argv[])
             {
                 case SDL_KEYDOWN:
                 {
+                    if (!paused)
+                    {
+                        if (event.key.keysym.sym == SDLK_SPACE)
+                        {
+                            // TODO move this to the ship possibly
+                            shooting = true;
+                        }
+                    }
+
+                    // TODO Lets move event handling inside objects such as the ship
                     if (event.key.keysym.sym == SDLK_UP)
                     {
                         s.start_thruster();
@@ -140,18 +165,16 @@ int main(int argc, char* argv[])
                     {
                         s.start_turning(TurnDirection::left);
                     }
-                    else if (event.key.keysym.sym == SDLK_SPACE)
+                    else if (event.key.keysym.sym == SDLK_RETURN && paused)
                     {
-                        // TODO move this to the ship possibly
-                        shooting = true;
-                    }
-                    else if (event.key.keysym.sym == SDLK_o)
-                    {
-                        frames_per_second -= 1;
-                    }
-                    else if (event.key.keysym.sym == SDLK_p)
-                    {
-                        frames_per_second += 1;
+                        // TODO Move most this to a main logic class that can be re-create to *reset* everything with
+                        // out having to manually do it
+                        asteroid_manager.reset();
+                        bullet_manager.reset();
+                        score.reset();
+                        life_bar = LifeBar();
+                        s.reset({width / 2, height / 2}, default_ship_acceleration);
+                        paused = false;
                     }
                     break;
                 }
@@ -201,42 +224,45 @@ int main(int argc, char* argv[])
         bullet_manager.update(delta_time);
         asteroid_manager.update(delta_time);
 
-        // TODO Move this logic of the ship + asteroid and bullet + asteroid to some other place
-        for (auto b_it = bullet_manager.begin(); b_it != bullet_manager.end(); ++b_it)
+        if (!paused)
         {
-            for (auto a_it = asteroid_manager.begin(); a_it != asteroid_manager.end(); ++a_it)
+            // TODO Move this logic of the ship + asteroid and bullet + asteroid to some other place
+            for (auto b_it = bullet_manager.begin(); b_it != bullet_manager.end(); ++b_it)
             {
-                auto bullet = *b_it;
-                Rectangle bullet_rect{{static_cast<int32_t>(bullet.position.x),
-                                       static_cast<int32_t>(bullet.position.y)},
-                                      {bullet.size.width, bullet.size.height}};
-
-                // TODO Turn the bullet rect into VectorLines or fix the colliding algorithm
-                if (a_it->shape.surrounding_rect().colliding(bullet_rect))
+                for (auto a_it = asteroid_manager.begin(); a_it != asteroid_manager.end(); ++a_it)
                 {
-                    auto pos = Point{static_cast<int32_t>(s.pos().x),
-                                     static_cast<int32_t>(s.pos().y)};
-                    asteroid_manager.remove_asteroid(a_it, pos);
-                    b_it = bullet_manager.erase(b_it);
-                    break;
+                    auto bullet = *b_it;
+                    Rectangle bullet_rect{{static_cast<int32_t>(bullet.position.x),
+                                           static_cast<int32_t>(bullet.position.y)},
+                                          {bullet.size.width, bullet.size.height}};
+
+                    // TODO Turn the bullet rect into VectorLines or fix the colliding algorithm
+                    if (a_it->shape.surrounding_rect().colliding(bullet_rect))
+                    {
+                        auto pos = Point{static_cast<int32_t>(s.pos().x),
+                                         static_cast<int32_t>(s.pos().y)};
+                        asteroid_manager.remove_asteroid(a_it, pos);
+                        b_it = bullet_manager.erase(b_it);
+                        break;
+                    }
                 }
             }
-        }
-        
-        if (!s.invulnerable())
-        {
-            for (auto it = asteroid_manager.begin(); it != asteroid_manager.end(); ++it)
+            
+            if (!s.invulnerable())
             {
-                if (it->shape.colliding(s.ship_shape()))
+                for (auto it = asteroid_manager.begin(); it != asteroid_manager.end(); ++it)
                 {
-                    s.reset({width / 2, height / 2}, default_ship_acceleration);
+                    if (it->shape.colliding(s.ship_shape()))
+                    {
+                        s.reset({width / 2, height / 2}, default_ship_acceleration);
 
-                    auto pos = Point{static_cast<int32_t>(s.pos().x),
-                                     static_cast<int32_t>(s.pos().y)};
+                        auto pos = Point{static_cast<int32_t>(s.pos().x),
+                                         static_cast<int32_t>(s.pos().y)};
 
-                    asteroid_manager.remove_asteroid(it, pos);
-                    life_bar.remove_life();
-                    break;
+                        asteroid_manager.remove_asteroid(it, pos);
+                        life_bar.remove_life();
+                        break;
+                    }
                 }
             }
         }
@@ -260,13 +286,15 @@ int main(int argc, char* argv[])
             fps_counter.draw(renderer);
         }
 
-        SDL_RenderPresent(sdl_renderer);
-
         if (life_bar.dead())
         {
-            std::cout << "Game over ..." << std::endl;
-            life_bar = LifeBar();
+            game_over.draw(renderer);
+            restart.draw(renderer);
+            paused = true;
+            //life_bar = LifeBar();
         }
+
+        SDL_RenderPresent(sdl_renderer);
 
         // TODO Clean this FPS into a class or something
         if (t.elapsed().count() < one_second / frames_per_second)
@@ -282,7 +310,7 @@ int main(int argc, char* argv[])
         {
             if (fps_enabled)
             {
-                fps_counter.set_text(std::to_string(frames));
+                fps_counter.set_text(std::to_string(static_cast<int32_t>(frames)));
 
                 // FIXME Bah hard coded - ish (mainly the spacing)
                 fps_counter.set_position({static_cast<int32_t>(width) - fps_counter.text_size().width - 20, 20});

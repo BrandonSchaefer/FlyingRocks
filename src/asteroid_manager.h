@@ -57,6 +57,8 @@ public:
 
     std::list<Asteroid>::iterator remove_asteroid(std::list<Asteroid>::iterator const& it, Point const& avoid_center);
 
+    void reset();
+
     void update(float delta);
     void update_position(PositionUpdater const& position_updater);
     void draw(SDLRenderer const& renderer) const;
@@ -67,6 +69,7 @@ private:
 
     int32_t starting_number;
     std::list<Asteroid> asteroids_;
+    Point center;
 
     ScoreObserver* score_observer{nullptr};
 
