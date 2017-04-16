@@ -53,6 +53,11 @@ void SDLTexture::set_size(Size const& in_size)
     size = in_size;
 }
 
+Size SDLTexture::texture_size() const
+{
+    return size;
+}
+
 void SDLTexture::draw(SDLRenderer const& renderer) const
 {
     SDL_Rect rect{top_left.x, top_left.y, size.width, size.height};

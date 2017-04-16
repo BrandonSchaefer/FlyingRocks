@@ -38,11 +38,15 @@ class SDLRenderer;
 class SDLTexture
 {
 public:
+    SDLTexture() = default;
+
     // Takes ownership of the pointer
     SDLTexture(SDL_Texture* texture);
 
     void set_position(Point const& pos);
     void set_size(Size const& size);
+
+    Size texture_size() const;
 
     void draw(SDLRenderer const& renderer) const;
 

@@ -29,7 +29,7 @@
 namespace
 {
 float const friction{0.75f};
-float const default_invulnerable_time{2.0f};
+float const default_invulnerable_time{1.5f};
 
 // FIXME This should be part of an animation thing or something?
 float const blink_speed(0.05f);

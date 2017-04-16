@@ -119,12 +119,3 @@ SDL_Renderer* SDLRenderer::renderer() const
 {
     return renderer_.get();
 }
-
-SDLTexture SDLRenderer::create_texture_from_surface(SDL_Surface* surface) const
-{
-    SDLTexture texture(SDL_CreateTextureFromSurface(renderer_.get(), surface));
-
-    texture.set_size({surface->w, surface->h});
-
-    return texture;
-}

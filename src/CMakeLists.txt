@@ -22,6 +22,7 @@ set (FLYING_ROCK_LOADER_SRC
     sdl_renderer.cpp
     sdl_texture.cpp
     ship.cpp
+    text.cpp
     random_generator.cpp
     timer.cpp
     vector.cpp
@@ -45,6 +46,7 @@ set (FLYING_ROCK_LOADER_HDR
     sdl_renderer.h
     sdl_texture.h
     ship.h
+    text.h
     random_generator.h
     timer.h
     vector.h

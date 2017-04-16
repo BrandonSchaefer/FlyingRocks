@@ -65,7 +65,6 @@ void AsteroidMananger::set_score_observer(ScoreObserver* observer)
 
 void AsteroidMananger::populate(Rectangle const& avoid_region)
 {
-    printf("%i %i %i %i\n", avoid_region.top_left.x, avoid_region.top_left.y, avoid_region.size.width, avoid_region.size.height);
     for (int32_t i = 0; i < starting_number; i++)
     {
         auto new_basic = asteroid_shapes[random_asteroid(mt())];
@@ -74,14 +73,11 @@ void AsteroidMananger::populate(Rectangle const& avoid_region)
         auto new_x = random_x(mt());
         auto new_y = random_y(mt());
 
-        printf("Wtttf\n");
-
-        // TODO Random-ize this
         if (avoid_region.colliding(Point{new_x, new_y}))
         {
-            printf("AVOID\n");
-            new_x += 100;
-            new_y += 100;
+            std::uniform_int_distribution<int32_t> random_direction{0, 1};
+            new_x += random_direction(mt()) ? default_avoid_expand : -default_avoid_expand;
+            new_y += random_direction(mt()) ? default_avoid_expand : -default_avoid_expand;
         }
 
         new_basic.set_position({static_cast<float>(new_x), static_cast<float>(new_y)});

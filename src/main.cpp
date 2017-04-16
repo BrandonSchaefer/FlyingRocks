@@ -36,6 +36,7 @@
 #include "vector_lines.h"
 #include "timer.h"
 #include "ship.h"
+#include "text.h"
 
 #include <iostream>
 #include <chrono>
@@ -66,6 +67,8 @@ Rectangle const default_size{{0, 0}, {800, 600}};
 
 Vector const default_ship_acceleration{0, -500};
 
+uint32_t const fps_font_size{36};
+SDL_Color const fps_font_color{0x00, 0xFF, 0x00, 0xFF};
 }
 
 int main(int argc, char* argv[])
@@ -97,6 +100,12 @@ int main(int argc, char* argv[])
 
     Ship s({width/2, height/2}, default_ship_acceleration);
 
+    Text fps_counter(&renderer, fps_font_color, fps_font_size);
+    fps_counter.set_text(std::to_string(default_fps));
+
+    // FIXME Bah hard coded - ish (mainly the spacing)
+    fps_counter.set_position({static_cast<int32_t>(width) - fps_counter.text_size().width - 20, 20});
+
     float delta_time = 0.0f;
     Timer t;
 
@@ -104,6 +113,7 @@ int main(int argc, char* argv[])
     uint32_t frames = 0;
 
     bool done = false;
+    bool fps_enabled = true;
 
     bool shooting = false;
 
@@ -162,6 +172,10 @@ int main(int argc, char* argv[])
                     else if (event.key.keysym.sym == SDLK_SPACE)
                     {
                         shooting = false;
+                    }
+                    else if (event.key.keysym.sym == SDLK_F10)
+                    {
+                        fps_enabled = !fps_enabled;
                     }
                     break;
                 }
@@ -241,6 +255,11 @@ int main(int argc, char* argv[])
         score.draw(renderer);
         life_bar.draw(renderer);
 
+        if (fps_enabled)
+        {
+            fps_counter.draw(renderer);
+        }
+
         SDL_RenderPresent(sdl_renderer);
 
         if (life_bar.dead())
@@ -261,7 +280,14 @@ int main(int argc, char* argv[])
 
         if (current_second >= 1.0f)
         {
-            std::cout << frames << " frames per second " << std::endl;
+            if (fps_enabled)
+            {
+                fps_counter.set_text(std::to_string(frames));
+
+                // FIXME Bah hard coded - ish (mainly the spacing)
+                fps_counter.set_position({static_cast<int32_t>(width) - fps_counter.text_size().width - 20, 20});
+            }
+
             frames = 0;
             current_second = 0.0f;
         }

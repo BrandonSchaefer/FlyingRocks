@@ -52,8 +52,6 @@ public:
     void draw(Rectangle const& rect) const;
     void draw_solid(Rectangle const& rect) const;
 
-    SDLTexture create_texture_from_surface(SDL_Surface* surface) const;
-
     // TODO Wrap these up in real classes/functions to avoid needing to expose SDL2
     SDL_Window* window() const;
     SDL_Renderer* renderer() const;
